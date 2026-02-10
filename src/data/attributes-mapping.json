@@ -1,0 +1,739 @@
+[
+  {
+    "featureId": "25",
+    "featureName": "Astar Materyali",
+    "values": [
+      {
+        "valueId": "255",
+        "valueName": "Eva"
+      },
+      {
+        "valueId": "252",
+        "valueName": "Hakiki Deri"
+      },
+      {
+        "valueId": "253",
+        "valueName": "Suni Deri"
+      },
+      {
+        "valueId": "254",
+        "valueName": "Tekstil"
+      }
+    ]
+  },
+  {
+    "featureId": "21",
+    "featureName": "Bağlama Şekli",
+    "values": [
+      {
+        "valueId": "215",
+        "valueName": "Bağcıklı"
+      },
+      {
+        "valueId": "220",
+        "valueName": "Bağcıklı ve Fermuarlı"
+      },
+      {
+        "valueId": "217",
+        "valueName": "Bağcıksız"
+      },
+      {
+        "valueId": "223",
+        "valueName": "Bantlı"
+      },
+      {
+        "valueId": "221",
+        "valueName": "Belirtilmemiş"
+      },
+      {
+        "valueId": "218",
+        "valueName": "Cırt Bant"
+      },
+      {
+        "valueId": "224",
+        "valueName": "Cırt Bant + Bağcık"
+      },
+      {
+        "valueId": "216",
+        "valueName": "Fermuarlı"
+      },
+      {
+        "valueId": "219",
+        "valueName": "Lastikli"
+      },
+      {
+        "valueId": "222",
+        "valueName": "Slip-on"
+      }
+    ]
+  },
+  {
+    "featureId": "17",
+    "featureName": "Desen",
+    "values": [
+      {
+        "valueId": "153",
+        "valueName": "3 Boyutlu"
+      },
+      {
+        "valueId": "168",
+        "valueName": "Ajurlu"
+      },
+      {
+        "valueId": "164",
+        "valueName": "Animal"
+      },
+      {
+        "valueId": "118",
+        "valueName": "Araba"
+      },
+      {
+        "valueId": "122",
+        "valueName": "Armürlü"
+      },
+      {
+        "valueId": "141",
+        "valueName": "Baklava"
+      },
+      {
+        "valueId": "146",
+        "valueName": "Balık sırtı"
+      },
+      {
+        "valueId": "117",
+        "valueName": "Baskılı"
+      },
+      {
+        "valueId": "135",
+        "valueName": "Batik"
+      },
+      {
+        "valueId": "125",
+        "valueName": "Chevron"
+      },
+      {
+        "valueId": "131",
+        "valueName": "Çiçekli"
+      },
+      {
+        "valueId": "124",
+        "valueName": "Çini"
+      },
+      {
+        "valueId": "132",
+        "valueName": "Çizgili"
+      },
+      {
+        "valueId": "150",
+        "valueName": "Çocuk Temalı"
+      },
+      {
+        "valueId": "133",
+        "valueName": "Degrade"
+      },
+      {
+        "valueId": "143",
+        "valueName": "Desenli"
+      },
+      {
+        "valueId": "157",
+        "valueName": "Dijital Baskı"
+      },
+      {
+        "valueId": "149",
+        "valueName": "Doğal Taş Görünümlü"
+      },
+      {
+        "valueId": "144",
+        "valueName": "Dokulu"
+      },
+      {
+        "valueId": "160",
+        "valueName": "Düz"
+      },
+      {
+        "valueId": "127",
+        "valueName": "Ekose / Kareli"
+      },
+      {
+        "valueId": "136",
+        "valueName": "Etnik"
+      },
+      {
+        "valueId": "113",
+        "valueName": "Figür"
+      },
+      {
+        "valueId": "140",
+        "valueName": "Galaksi"
+      },
+      {
+        "valueId": "158",
+        "valueName": "Geometrik"
+      },
+      {
+        "valueId": "151",
+        "valueName": "İpliği Boyalı"
+      },
+      {
+        "valueId": "120",
+        "valueName": "Jakarlı"
+      },
+      {
+        "valueId": "130",
+        "valueName": "Kalp"
+      },
+      {
+        "valueId": "154",
+        "valueName": "Kamuflaj"
+      },
+      {
+        "valueId": "116",
+        "valueName": "Kapitone"
+      },
+      {
+        "valueId": "167",
+        "valueName": "Kırçıllı"
+      },
+      {
+        "valueId": "134",
+        "valueName": "Leopar"
+      },
+      {
+        "valueId": "139",
+        "valueName": "Lisanslı"
+      },
+      {
+        "valueId": "161",
+        "valueName": "Manzara"
+      },
+      {
+        "valueId": "129",
+        "valueName": "Mikro Desen"
+      },
+      {
+        "valueId": "166",
+        "valueName": "Mix"
+      },
+      {
+        "valueId": "112",
+        "valueName": "Nakışlı / İşlemeli"
+      },
+      {
+        "valueId": "128",
+        "valueName": "Panelli"
+      },
+      {
+        "valueId": "126",
+        "valueName": "Pano"
+      },
+      {
+        "valueId": "159",
+        "valueName": "Puantiyeli"
+      },
+      {
+        "valueId": "152",
+        "valueName": "Reflektör"
+      },
+      {
+        "valueId": "155",
+        "valueName": "Renk Bloklu"
+      },
+      {
+        "valueId": "162",
+        "valueName": "Renkli"
+      },
+      {
+        "valueId": "142",
+        "valueName": "Retro"
+      },
+      {
+        "valueId": "145",
+        "valueName": "Saç Örgü"
+      },
+      {
+        "valueId": "163",
+        "valueName": "Şal Desen"
+      },
+      {
+        "valueId": "148",
+        "valueName": "Sanatsal"
+      },
+      {
+        "valueId": "114",
+        "valueName": "Sırt Baskılı"
+      },
+      {
+        "valueId": "165",
+        "valueName": "Slogan"
+      },
+      {
+        "valueId": "115",
+        "valueName": "Soyut"
+      },
+      {
+        "valueId": "123",
+        "valueName": "Sulu Boya"
+      },
+      {
+        "valueId": "138",
+        "valueName": "Timsah"
+      },
+      {
+        "valueId": "137",
+        "valueName": "Tropikal"
+      },
+      {
+        "valueId": "156",
+        "valueName": "Varaklı"
+      },
+      {
+        "valueId": "121",
+        "valueName": "Yazı Karekterli / Motto"
+      },
+      {
+        "valueId": "119",
+        "valueName": "Yılbaşı"
+      },
+      {
+        "valueId": "147",
+        "valueName": "Zigzag"
+      }
+    ]
+  },
+  {
+    "featureId": "8",
+    "featureName": "Dış Materyal",
+    "values": [
+      {
+        "valueId": "29",
+        "valueName": "Hakiki Deri"
+      },
+      {
+        "valueId": "30",
+        "valueName": "Mikrofiber"
+      },
+      {
+        "valueId": "28",
+        "valueName": "Süet"
+      },
+      {
+        "valueId": "31",
+        "valueName": "Suni Deri"
+      },
+      {
+        "valueId": "32",
+        "valueName": "Tekstil"
+      }
+    ]
+  },
+  {
+    "featureId": "13",
+    "featureName": "Ek Özellik",
+    "values": [
+      {
+        "valueId": "39",
+        "valueName": "Broderie"
+      },
+      {
+        "valueId": "41",
+        "valueName": "Ek Özellik Mevcut Değil"
+      },
+      {
+        "valueId": "42",
+        "valueName": "Işıklı"
+      },
+      {
+        "valueId": "40",
+        "valueName": "Lisanslı"
+      },
+      {
+        "valueId": "38",
+        "valueName": "Ortopedik Taban"
+      },
+      {
+        "valueId": "37",
+        "valueName": "Saten"
+      },
+      {
+        "valueId": "44",
+        "valueName": "Seamless"
+      },
+      {
+        "valueId": "45",
+        "valueName": "Su Geçirmez"
+      },
+      {
+        "valueId": "43",
+        "valueName": "Yıkamalı"
+      }
+    ]
+  },
+  {
+    "featureId": "24",
+    "featureName": "İç Taban Materyali",
+    "values": [
+      {
+        "valueId": "251",
+        "valueName": "Deri + Tekstil"
+      },
+      {
+        "valueId": "247",
+        "valueName": "Hakiki Deri"
+      },
+      {
+        "valueId": "250",
+        "valueName": "Suni Deri"
+      },
+      {
+        "valueId": "249",
+        "valueName": "Suni Deri + Tekstil"
+      },
+      {
+        "valueId": "248",
+        "valueName": "Tekstil"
+      }
+    ]
+  },
+  {
+    "featureId": "12",
+    "featureName": "İthalatçı/ Yetkili Temsilci/ İfa Hizmet Sağlayıcı",
+    "values": []
+  },
+  {
+    "featureId": "20",
+    "featureName": "Koleksiyon",
+    "values": [
+      {
+        "valueId": "202",
+        "valueName": "Authentic"
+      },
+      {
+        "valueId": "199",
+        "valueName": "Basic"
+      },
+      {
+        "valueId": "214",
+        "valueName": "Büyük Beden"
+      },
+      {
+        "valueId": "204",
+        "valueName": "Care"
+      },
+      {
+        "valueId": "209",
+        "valueName": "Christmas"
+      },
+      {
+        "valueId": "213",
+        "valueName": "Classic Slip-On"
+      },
+      {
+        "valueId": "211",
+        "valueName": "Era"
+      },
+      {
+        "valueId": "198",
+        "valueName": "Glam"
+      },
+      {
+        "valueId": "212",
+        "valueName": "Halloween"
+      },
+      {
+        "valueId": "210",
+        "valueName": "Hamile"
+      },
+      {
+        "valueId": "203",
+        "valueName": "Old Skool"
+      },
+      {
+        "valueId": "200",
+        "valueName": "Petite"
+      },
+      {
+        "valueId": "207",
+        "valueName": "Ramadan"
+      },
+      {
+        "valueId": "205",
+        "valueName": "SK8-HI"
+      },
+      {
+        "valueId": "201",
+        "valueName": "SK8-HI Tapered"
+      },
+      {
+        "valueId": "206",
+        "valueName": "Tall"
+      },
+      {
+        "valueId": "208",
+        "valueName": "Tesettür Giyim"
+      }
+    ]
+  },
+  {
+    "featureId": "15",
+    "featureName": "Kumaş Tipi",
+    "values": [
+      {
+        "valueId": "101",
+        "valueName": "Belirtilmemiş"
+      },
+      {
+        "valueId": "103",
+        "valueName": "Dantel"
+      },
+      {
+        "valueId": "97",
+        "valueName": "Denim"
+      },
+      {
+        "valueId": "104",
+        "valueName": "Dokuma"
+      },
+      {
+        "valueId": "102",
+        "valueName": "Hakiki Deri"
+      },
+      {
+        "valueId": "100",
+        "valueName": "Örme"
+      },
+      {
+        "valueId": "105",
+        "valueName": "Penye"
+      },
+      {
+        "valueId": "99",
+        "valueName": "Suni Deri"
+      },
+      {
+        "valueId": "98",
+        "valueName": "Triko"
+      }
+    ]
+  },
+  {
+    "featureId": "9",
+    "featureName": "Kutu Durumu",
+    "values": [
+      {
+        "valueId": "33",
+        "valueName": "Kutulu"
+      },
+      {
+        "valueId": "34",
+        "valueName": "Kutusuz"
+      }
+    ]
+  },
+  {
+    "featureId": "14",
+    "featureName": "Materyal",
+    "values": [
+      {
+        "valueId": "66",
+        "valueName": "%100 Pamuk"
+      },
+      {
+        "valueId": "94",
+        "valueName": "2 İplik"
+      },
+      {
+        "valueId": "91",
+        "valueName": "2 İplik Şardonlu"
+      },
+      {
+        "valueId": "75",
+        "valueName": "Aerobin"
+      },
+      {
+        "valueId": "58",
+        "valueName": "Ahşap"
+      },
+      {
+        "valueId": "83",
+        "valueName": "Altın Kaplama"
+      },
+      {
+        "valueId": "96",
+        "valueName": "Bambu + Polyester"
+      },
+      {
+        "valueId": "54",
+        "valueName": "Bambu-Pamuk"
+      },
+      {
+        "valueId": "60",
+        "valueName": "Boncuk"
+      },
+      {
+        "valueId": "48",
+        "valueName": "Brode"
+      },
+      {
+        "valueId": "69",
+        "valueName": "Çelik"
+      },
+      {
+        "valueId": "71",
+        "valueName": "Cotonel"
+      },
+      {
+        "valueId": "63",
+        "valueName": "Crinkle"
+      },
+      {
+        "valueId": "79",
+        "valueName": "Dana Derisi"
+      },
+      {
+        "valueId": "72",
+        "valueName": "Deri Tekstil"
+      },
+      {
+        "valueId": "62",
+        "valueName": "Doğal Taş"
+      },
+      {
+        "valueId": "53",
+        "valueName": "Döküm"
+      },
+      {
+        "valueId": "73",
+        "valueName": "Double Face"
+      },
+      {
+        "valueId": "82",
+        "valueName": "EVA / PVC"
+      },
+      {
+        "valueId": "64",
+        "valueName": "Gabardin"
+      },
+      {
+        "valueId": "77",
+        "valueName": "Gauze"
+      },
+      {
+        "valueId": "59",
+        "valueName": "Hakiki Deri"
+      },
+      {
+        "valueId": "56",
+        "valueName": "Halat"
+      },
+      {
+        "valueId": "90",
+        "valueName": "İnterlok"
+      },
+      {
+        "valueId": "76",
+        "valueName": "Jessica"
+      },
+      {
+        "valueId": "51",
+        "valueName": "Kapitone"
+      },
+      {
+        "valueId": "49",
+        "valueName": "Kaşkorse"
+      },
+      {
+        "valueId": "81",
+        "valueName": "Kaşmir"
+      },
+      {
+        "valueId": "87",
+        "valueName": "Lazer Kesim"
+      },
+      {
+        "valueId": "61",
+        "valueName": "Mermer"
+      },
+      {
+        "valueId": "78",
+        "valueName": "Micro Saten"
+      },
+      {
+        "valueId": "92",
+        "valueName": "Muline"
+      },
+      {
+        "valueId": "85",
+        "valueName": "Naylon"
+      },
+      {
+        "valueId": "68",
+        "valueName": "Nubuk"
+      },
+      {
+        "valueId": "89",
+        "valueName": "Oxford"
+      },
+      {
+        "valueId": "80",
+        "valueName": "Pamuk - Polietilen"
+      },
+      {
+        "valueId": "50",
+        "valueName": "Paraşüt"
+      },
+      {
+        "valueId": "93",
+        "valueName": "Plain"
+      },
+      {
+        "valueId": "57",
+        "valueName": "Platinyum Kaplama"
+      },
+      {
+        "valueId": "88",
+        "valueName": "Polisaten"
+      },
+      {
+        "valueId": "74",
+        "valueName": "Poplin"
+      },
+      {
+        "valueId": "95",
+        "valueName": "Rigid"
+      },
+      {
+        "valueId": "67",
+        "valueName": "Saf İpek"
+      },
+      {
+        "valueId": "52",
+        "valueName": "Selanik"
+      },
+      {
+        "valueId": "47",
+        "valueName": "Şönil"
+      },
+      {
+        "valueId": "55",
+        "valueName": "Suni Deri"
+      },
+      {
+        "valueId": "84",
+        "valueName": "Tatlı Su İncisi"
+      },
+      {
+        "valueId": "86",
+        "valueName": "Vinyl"
+      },
+      {
+        "valueId": "70",
+        "valueName": "Viskon Karışımlı"
+      },
+      {
+        "valueId": "65",
+        "valueName": "Yün - Akrilik - Polyester"
+      }
+    ]
+  }
+]

@@ -1,0 +1,220 @@
+{
+    "KADIN": {
+        "id": "37",
+        "name": "KADIN",
+        "subcategories": {
+            "Ev Terliği": {
+                "ids": [
+                    "37",
+                    "38",
+                    "42"
+                ],
+                "name": "Kadın Ev Terliği"
+            },
+            "Panduf & Ev Botu": {
+                "ids": [
+                    "37",
+                    "38",
+                    "43"
+                ],
+                "name": "Kadın Panduf & Ev Botu"
+            },
+            "Bot": {
+                "ids": [
+                    "37",
+                    "39",
+                    "44"
+                ],
+                "name": "Kadın Bot"
+            },
+            "Çizme": {
+                "ids": [
+                    "37",
+                    "39",
+                    "45"
+                ],
+                "name": "Kadın Çizme"
+            },
+            "Sneaker": {
+                "ids": [
+                    "37",
+                    "40",
+                    "46"
+                ],
+                "name": "Kadın Sneaker"
+            },
+            "Loafer Ayakkabı": {
+                "ids": [
+                    "37",
+                    "40",
+                    "47"
+                ],
+                "name": "Kadın Loafer Ayakkabı"
+            },
+            "Sandalet": {
+                "ids": [
+                    "37",
+                    "41",
+                    "48"
+                ],
+                "name": "Kadın Sandalet"
+            },
+            "Terlik": {
+                "ids": [
+                    "37",
+                    "41",
+                    "49"
+                ],
+                "name": "Kadın Terlik"
+            }
+        }
+    },
+    "ERKEK": {
+        "id": "32",
+        "name": "ERKEK",
+        "subcategories": {
+            "Bot": {
+                "ids": [
+                    "32",
+                    "33",
+                    "50"
+                ],
+                "name": "Erkek Bot"
+            },
+            "Çizme": {
+                "ids": [
+                    "32",
+                    "33",
+                    "51"
+                ],
+                "name": "Erkek Çizme"
+            },
+            "Ev Terliği": {
+                "ids": [
+                    "32",
+                    "34",
+                    "52"
+                ],
+                "name": "Erkek Ev Terliği"
+            },
+            "Panduf": {
+                "ids": [
+                    "32",
+                    "34",
+                    "53"
+                ],
+                "name": "Erkek Panduf"
+            },
+            "Sneaker": {
+                "ids": [
+                    "32",
+                    "35",
+                    "54"
+                ],
+                "name": "Erkek Sneaker"
+            },
+            "Sandalet": {
+                "ids": [
+                    "32",
+                    "36",
+                    "55"
+                ],
+                "name": "Erkek Sandalet"
+            },
+            "Terlik": {
+                "ids": [
+                    "32",
+                    "36",
+                    "56"
+                ],
+                "name": "Erkek Terlik"
+            }
+        }
+    },
+    "ÇOCUK": {
+        "id": "18",
+        "name": "ÇOCUK",
+        "subcategories": {
+            "Erkek Çocuk Bot Çizme": {
+                "ids": [
+                    "18",
+                    "19",
+                    "26"
+                ],
+                "name": "Erkek Çocuk Bot Çizme"
+            },
+            "Erkek Çocuk Ev Terliği & Panduf": {
+                "ids": [
+                    "18",
+                    "19",
+                    "28"
+                ],
+                "name": "Erkek Çocuk Ev Terliği & Panduf"
+            },
+            "Erkek Çocuk Günlük Ayakkabı": {
+                "ids": [
+                    "18",
+                    "19",
+                    "29"
+                ],
+                "name": "Erkek Çocuk Günlük Ayakkabı"
+            },
+            "Erkek Çocuk Terlik": {
+                "ids": [
+                    "18",
+                    "19",
+                    "30"
+                ],
+                "name": "Erkek Çocuk Terlik"
+            },
+            "Erkek Çocuk Sandalet": {
+                "ids": [
+                    "18",
+                    "19",
+                    "31"
+                ],
+                "name": "Erkek Çocuk Sandalet"
+            },
+            "Kız Çocuk Terlik": {
+                "ids": [
+                    "18",
+                    "20",
+                    "21"
+                ],
+                "name": "Kız Çocuk Terlik"
+            },
+            "Kız Çocuk Bot & Çizme": {
+                "ids": [
+                    "18",
+                    "20",
+                    "22"
+                ],
+                "name": "Kız Çocuk Bot & Çizme"
+            },
+            "Kız Çocuk Ev Terliği & Panduf": {
+                "ids": [
+                    "18",
+                    "20",
+                    "23"
+                ],
+                "name": "Kız Çocuk Ev Terliği & Panduf"
+            },
+            "Kız Çocuk Günlük Ayakkabı": {
+                "ids": [
+                    "18",
+                    "20",
+                    "24"
+                ],
+                "name": "Kız Çocuk Günlük Ayakkabı"
+            },
+            "Kız Çocuk Sandalet": {
+                "ids": [
+                    "18",
+                    "20",
+                    "25"
+                ],
+                "name": "Kız Çocuk Sandalet"
+            }
+        }
+    }
+}
