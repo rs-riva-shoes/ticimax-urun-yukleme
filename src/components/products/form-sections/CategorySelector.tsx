@@ -2,7 +2,7 @@ import { Sparkles } from "lucide-react";
 import { useState } from "react";
 import hierarchicalCategories from "@/data/hierarchical-categories.json";
 import productTypeCategories from "@/data/product-type-categories.json";
-import brands from "@/data/brands.json";
+// brands.json import removed
 
 interface CategorySelectorProps {
     hierarchicalCategoryName: string;
@@ -19,6 +19,8 @@ interface CategorySelectorProps {
     selectedSupplier: string;
     setSelectedSupplier: (value: string) => void;
     onAddSupplier: (name: string, ticimaxId: string) => Promise<void>;
+    brands: any[]; // Marka listesi
+    onAddBrand: (name: string) => Promise<void>;
 }
 
 export function CategorySelector({
@@ -35,18 +37,22 @@ export function CategorySelector({
     suppliers = [],
     selectedSupplier,
     setSelectedSupplier,
-    onAddSupplier
+    onAddSupplier,
+    brands = [],
+    onAddBrand
 }: CategorySelectorProps) {
     const [isAddingSupplier, setIsAddingSupplier] = useState(false);
     const [newSupplierName, setNewSupplierName] = useState("");
-    const [newSupplierId, setNewSupplierId] = useState("");
+
+    const [isAddingBrand, setIsAddingBrand] = useState(false);
+    const [newBrandName, setNewBrandName] = useState("");
 
     const handleAddSupplier = async () => {
-        if (!newSupplierName || !newSupplierId) return;
-        await onAddSupplier(newSupplierName, newSupplierId);
+        if (!newSupplierName) return;
+        // İkinci parametre artık dummy string ("")
+        await onAddSupplier(newSupplierName, "");
         setIsAddingSupplier(false);
         setNewSupplierName("");
-        setNewSupplierId("");
     };
 
     return (
@@ -130,27 +136,60 @@ export function CategorySelector({
 
             {/* Brand Selection */}
             <div className="space-y-1">
-                <label className="text-xs font-semibold flex items-center gap-1.5">
-                    <Sparkles className="w-3 h-3 text-orange-600" />
-                    Marka
-                </label>
-                <select
-                    className="w-full text-sm p-2 rounded-md border bg-background/50"
-                    value={selectedBrand}
-                    onChange={(e) => {
-                        const selectedId = e.target.value;
-                        setSelectedBrand(selectedId);
-                        const brand = brands.find(b => b.id === selectedId);
-                        if (brand) setSelectedBrandName(brand.name);
-                    }}
-                >
-                    <option value="">Marka Seçiniz</option>
-                    {brands.map((brand) => (
-                        <option key={brand.id} value={brand.id}>
-                            {brand.name}
-                        </option>
-                    ))}
-                </select>
+                <div className="flex justify-between items-center">
+                    <label className="text-xs font-semibold flex items-center gap-1.5">
+                        <Sparkles className="w-3 h-3 text-purple-600" />
+                        Marka
+                    </label>
+                    <button
+                        onClick={() => setIsAddingBrand(!isAddingBrand)}
+                        className="text-[10px] text-blue-500 hover:underline"
+                    >
+                        {isAddingBrand ? "İptal" : "+ Yeni Ekle"}
+                    </button>
+                </div>
+
+                {isAddingBrand ? (
+                    <div className="bg-gray-50 dark:bg-gray-800 p-2 rounded border space-y-2">
+                        <input
+                            type="text"
+                            placeholder="Marka Adı"
+                            className="w-full text-sm p-1 border rounded text-black"
+                            value={newBrandName}
+                            onChange={(e) => setNewBrandName(e.target.value)}
+                        />
+                        <button
+                            onClick={async () => {
+                                if (newBrandName) {
+                                    await onAddBrand(newBrandName);
+                                    setNewBrandName("");
+                                    setIsAddingBrand(false);
+                                }
+                            }}
+                            className="w-full bg-blue-600 text-white text-xs py-1 rounded hover:bg-blue-700"
+                        >
+                            Kaydet
+                        </button>
+                    </div>
+                ) : (
+                    <select
+                        className="w-full text-sm p-2 rounded-md border bg-background/50"
+                        value={selectedBrand}
+                        onChange={(e) => {
+                            const selectedId = e.target.value;
+                            setSelectedBrand(selectedId);
+                            const found = brands.find((b: any) => b.ticimaxId.toString() === selectedId);
+                            if (found) setSelectedBrandName(found.name);
+                        }}
+                    >
+                        <option value="">Marka Seçiniz</option>
+                        {brands.map((brand: any) => (
+                            <option key={brand.ticimaxId} value={brand.ticimaxId}>
+                                {brand.name}
+                            </option>
+                        ))}
+                    </select>
+                )}
             </div>
 
             {/* Supplier Selection */}
@@ -173,7 +212,7 @@ export function CategorySelector({
                         <input
                             type="text"
                             placeholder="Tedarikçi Adı"
-                            className="w-full text-sm p-1 border rounded"
+                            className="w-full text-sm p-1 border rounded text-black"
                             value={newSupplierName}
                             onChange={(e) => setNewSupplierName(e.target.value)}
                         />

@@ -34,10 +34,7 @@ interface ProductFormProps {
     attributes: Attribute[];
 }
 
-interface Category {
-    id: string;
-    name: string;
-}
+
 
 export function ProductForm({ attributes }: ProductFormProps) {
     // Files & Basic Info
@@ -51,7 +48,7 @@ export function ProductForm({ attributes }: ProductFormProps) {
     const [nameSuggesting, setNameSuggesting] = useState(false);
 
     // Categories & Brand
-    const [categories, setCategories] = useState<Category[]>([]); // Ticimax'tan gelen kategoriler
+
 
     // Dual Category System
     const [hierarchicalCategoryIds, setHierarchicalCategoryIds] = useState<string[]>([]);
@@ -62,6 +59,7 @@ export function ProductForm({ attributes }: ProductFormProps) {
 
     const [selectedBrand, setSelectedBrand] = useState("");
     const [selectedBrandName, setSelectedBrandName] = useState("");
+    const [brands, setBrands] = useState<any[]>([]); // Markalar listesi
 
     // Suppliers
     const [suppliers, setSuppliers] = useState<any[]>([]);
@@ -107,27 +105,41 @@ export function ProductForm({ attributes }: ProductFormProps) {
     const [isSaving, setIsSaving] = useState(false);
     const [savedProductId, setSavedProductId] = useState<string | null>(null);
 
-    // Initial Data Fetch
+    // Initial Data Fetch (Sequential to avoid Rate Limiting)
     useEffect(() => {
-        // Categories
-        fetch("/api/ticimax/category")
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    setCategories(data.categories);
+        const loadData = async () => {
+            // 1. Fetch Suppliers
+            try {
+                const reqSup = await fetch("/api/settings/suppliers");
+                const dataSup = await reqSup.json();
+                if (dataSup.success) {
+                    setSuppliers(dataSup.suppliers);
+                } else {
+                    console.error("Suppliers Error:", dataSup.error);
                 }
-            })
-            .catch(err => console.error("Failed to load categories", err));
+            } catch (err) {
+                console.error("Failed to load suppliers", err);
+            }
 
-        // Suppliers
-        fetch("/api/settings/suppliers")
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    setSuppliers(data.suppliers);
+            // 2. Wait 2 seconds (Ticimax Rate Limit protection)
+            // Ticimax ardışık isteklerde hata verebiliyor.
+            await new Promise(resolve => setTimeout(resolve, 2000));
+
+            // 3. Fetch Brands
+            try {
+                const reqBrands = await fetch("/api/settings/brands");
+                const dataBrands = await reqBrands.json();
+                if (dataBrands.success && dataBrands.brands) {
+                    setBrands(dataBrands.brands);
+                } else {
+                    console.error("Brands Error:", dataBrands?.error);
                 }
-            })
-            .catch(err => console.error("Failed to load suppliers", err));
+            } catch (err) {
+                console.error("Failed to load brands", err);
+            }
+        };
+
+        loadData();
     }, []);
 
     // Add New Supplier Handler
@@ -150,6 +162,30 @@ export function ProductForm({ attributes }: ProductFormProps) {
             }
         } catch (e) {
             console.error("Supplier add error:", e);
+            alert("Bağlantı hatası");
+        }
+    };
+
+    // Add New Brand Handler
+    const handleAddBrand = async (name: string) => {
+        try {
+            const res = await fetch("/api/settings/brands", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name })
+            });
+            const data = await res.json();
+            if (data.success && data.brand) {
+                setBrands(prev => [...prev, data.brand]);
+                if (data.brand.ticimaxId) {
+                    setSelectedBrand(data.brand.ticimaxId.toString());
+                }
+                alert(`Marka eklendi! ID: ${data.brand.ticimaxId}`);
+            } else {
+                alert("Hata: " + (data.error || "Bilinmeyen hata"));
+            }
+        } catch (e) {
+            console.error("Brand add error:", e);
             alert("Bağlantı hatası");
         }
     };
@@ -225,7 +261,7 @@ export function ProductForm({ attributes }: ProductFormProps) {
                     body: JSON.stringify({
                         title,
                         images: base64Images,
-                        categories,
+                        categories: productTypeCategories,
                         attributes
                     })
                 });
@@ -259,7 +295,7 @@ export function ProductForm({ attributes }: ProductFormProps) {
                 const response = await fetch("/api/ai/predict-category", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ title, categories })
+                    body: JSON.stringify({ title, categories: productTypeCategories })
                 });
 
                 const data = await response.json();
@@ -350,6 +386,10 @@ export function ProductForm({ attributes }: ProductFormProps) {
             hierarchicalCategoryName,
             productTypeCategoryId,
             productTypeCategoryName,
+            combinedCategoryIds: [
+                ...hierarchicalCategoryIds,
+                productTypeCategoryId
+            ].filter(Boolean), // Remove empty strings
             colorSettings, // Save mapping to Firebase
             price: {
                 purchase: parseFloat(purchasePrice) || 0,
@@ -366,27 +406,50 @@ export function ProductForm({ attributes }: ProductFormProps) {
             },
             variants: variants.map(v => {
                 // Enrich variant with specific image URL and Title if available
-                const setting = colorSettings[v.color];
-                let variantImage = "";
+                // Robust lookup to handle case/whitespace differences
+                const normalize = (s: string) => s?.trim().toLowerCase() || "";
+                const matchedColorKey = Object.keys(colorSettings).find(
+                    key => normalize(key) === normalize(v.color)
+                );
+                const setting = matchedColorKey ? colorSettings[matchedColorKey] : undefined;
 
-                // Use the FIRST selected image for the main variant image
+                let variantImages: string[] = [];
+
+                // Collect ALL selected images for the variant
                 if (imageUrls && setting?.imageIndices && setting.imageIndices.length > 0) {
-                    const firstIndex = setting.imageIndices[0];
-                    variantImage = imageUrls[firstIndex] || "";
+                    variantImages = setting.imageIndices.map(index => imageUrls[index]).filter(Boolean);
                 }
 
                 return {
                     ...v,
                     qty: Number(v.qty),
-                    image: variantImage, // Add image URL to variant
-                    customTitle: setting?.title || "" // Add custom title
+                    image: variantImages[0] || "", // Keep for backward compatibility/preview
+                    images: variantImages, // Send all images
+                    customTitle: setting?.title || "", // Add custom title
+                    _debugIndices: setting?.imageIndices || [] // Debug info to trace selection
                 };
             }),
             selectedAttributes: Object.entries(selectedAttributes).map(([k, v]) => {
-                const attrName = attributes.find(a => a.featureId.toString() === k)?.name;
-                const valName = attributes.find(a => a.featureId.toString() === k)?.values.find((val) => val.valueId.toString() === v)?.name;
-                return { featureId: k, valueId: v, name: attrName, valueName: valName };
-            }),
+                const attr = attributes.find(a => a.featureId.toString() === k);
+                const attrName = attr?.name;
+
+                let finalValueId = v;
+
+                // Eğer v sayısal değilse (örn: "Tekstil"), ID'sini bulmaya çalış
+                if (isNaN(Number(v))) {
+                    const foundVal = attr?.values.find(av => av.name.toLowerCase() === String(v).toLowerCase());
+                    if (foundVal) {
+                        finalValueId = foundVal.valueId.toString();
+                    } else {
+                        console.warn(`[Payload] Özellik değeri ID'ye çevrilemedi ve listede bulunamadı: ${attrName} -> ${v}`);
+                        // Eğer bulunamazsa, bu değeri göndermeyelim (filter ile temizleyeceğiz)
+                        finalValueId = "INVALID";
+                    }
+                }
+
+                const valName = attr?.values.find((val) => val.valueId.toString() === finalValueId)?.name;
+                return { featureId: k, valueId: finalValueId, name: attrName, valueName: valName };
+            }).filter(item => item.valueId !== "INVALID"),
             _meta: {
                 imageCount: files.length,
                 totalStock: variants.reduce((acc, curr) => acc + curr.qty, 0)
@@ -622,6 +685,8 @@ export function ProductForm({ attributes }: ProductFormProps) {
                                 selectedBrand={selectedBrand}
                                 setSelectedBrand={setSelectedBrand}
                                 setSelectedBrandName={setSelectedBrandName}
+                                brands={brands}
+                                onAddBrand={handleAddBrand}
                                 suppliers={suppliers}
                                 selectedSupplier={selectedSupplier}
                                 setSelectedSupplier={setSelectedSupplier}

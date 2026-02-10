@@ -47,9 +47,14 @@ export async function POST(request: Request) {
         console.log(`[Ticimax Push] Varyant Sayısı: ${payload.variants?.length || 0} (${variantsWithImages} tanesinde özel resim var)`);
         console.log(`[Ticimax Push] Resim Sayısı (Ana): ${payload.images?.length || 0}`);
 
-        // Debug first variant to check structure
-        if (payload.variants?.[0]) {
-            console.log(`[Ticimax Push] Örnek Varyant: ${payload.variants[0].color} - Img: ${payload.variants[0].image ? "Var" : "Yok"} - Title: ${payload.variants[0].customTitle || "Yok"}`);
+        // Debug all variants to check structure
+        if (payload.variants) {
+            console.log(`[Ticimax Push] TOPLAM ${payload.variants.length} VARYANT GELDİ:`);
+            payload.variants.forEach((v: any, index: number) => {
+                const imgCount = Array.isArray(v.images) ? v.images.length : (v.image ? 1 : 0);
+                const debugIndices = v._debugIndices ? JSON.stringify(v._debugIndices) : "N/A";
+                console.log(`   - V${index + 1} (${v.color}): ${imgCount} Resim (Indices: ${debugIndices}) | Title: ${v.customTitle || "YOK"}`);
+            });
         }
 
         // 2. Validasyon (Kullanıcı dostu hatalar)
@@ -83,6 +88,7 @@ export async function POST(request: Request) {
             ${payload.selectedAttributes.map((attr: any) => `
               <arr:UrunKartiTeknikDetay>
                 <arr:DegerID>${attr.valueId}</arr:DegerID>
+                <arr:ID>0</arr:ID>
                 <arr:OzellikID>${attr.featureId}</arr:OzellikID>
               </arr:UrunKartiTeknikDetay>
             `).join('')}
@@ -95,7 +101,26 @@ export async function POST(request: Request) {
         // Varyasyonlar
         let variantsInnerXml = '';
         if (payload.variants && payload.variants.length > 0) {
-            variantsInnerXml = payload.variants.map((v: any) => `
+            variantsInnerXml = payload.variants.map((v: any) => {
+                // Varyant resimleri hazırlığı
+                let variantImagesXml = '<arr:Resimler />';
+                let activeImages: string[] = [];
+
+                if (Array.isArray(v.images) && v.images.length > 0) {
+                    activeImages = v.images;
+                } else if (v.image) {
+                    activeImages = [v.image];
+                }
+
+                if (activeImages.length > 0) {
+                    variantImagesXml = `<arr:Resimler xmlns:b="http://schemas.microsoft.com/2003/10/Serialization/Arrays">
+                        ${activeImages.map((img: string) => `
+                            <b:string>${escapeXml(img)}</b:string>
+                        `).join('')}
+                     </arr:Resimler>`;
+                }
+
+                return `
                     <arr:Varyasyon>
                         <arr:Aktif>true</arr:Aktif>
                         <arr:AlisFiyati>${payload.price.purchase}</arr:AlisFiyati>
@@ -115,13 +140,15 @@ export async function POST(request: Request) {
                             </arr:VaryasyonOzellik>
                         </arr:Ozellikler>
                         <arr:ParaBirimiID>${currencyId}</arr:ParaBirimiID>
+                        ${variantImagesXml}
                         <arr:SatisFiyati>${payload.price.sale}</arr:SatisFiyati>
                         <arr:StokAdedi>${v.qty}</arr:StokAdedi>
                         <arr:StokKodu>${escapeXml(payload.productCode)}</arr:StokKodu>
                         <arr:TedarikciKodu>${escapeXml(v.barcode)}</arr:TedarikciKodu>
                         <arr:UrunKartiID>0</arr:UrunKartiID>
                     </arr:Varyasyon>
-                `).join('');
+                `;
+            }).join('');
         }
         const variantsXml = `<arr:Varyasyonlar>${variantsInnerXml}</arr:Varyasyonlar>`;
 
@@ -133,6 +160,12 @@ export async function POST(request: Request) {
                     <b:string>${escapeXml(img)}</b:string>
                 `).join('')}
              </arr:Resimler>`;
+        }
+
+        // Kategori ID Listesi (Hiyerarşik + Ürün Tipi)
+        let categoryIdArray = [payload.categoryId || 0];
+        if (payload.combinedCategoryIds && Array.isArray(payload.combinedCategoryIds) && payload.combinedCategoryIds.length > 0) {
+            categoryIdArray = payload.combinedCategoryIds;
         }
 
         const soapBody = `<?xml version="1.0" encoding="utf-8"?>
@@ -148,7 +181,7 @@ export async function POST(request: Request) {
           <arr:AnaKategoriID>${payload.categoryId || 0}</arr:AnaKategoriID>
           <arr:ID>0</arr:ID>
           <arr:Kategoriler xmlns:b="http://schemas.microsoft.com/2003/10/Serialization/Arrays">
-            <b:int>${payload.categoryId || 0}</b:int>
+            ${categoryIdArray.map((cid: any) => `<b:int>${cid}</b:int>`).join('')}
           </arr:Kategoriler>
           <arr:ListedeGoster>true</arr:ListedeGoster>
           <arr:MarkaID>${payload.brandId || 0}</arr:MarkaID>

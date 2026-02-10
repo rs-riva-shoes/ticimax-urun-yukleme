@@ -19,28 +19,29 @@ const extractValue = (xml: string, tag: string) => {
     return match ? match[1] : null;
 };
 
-// Yardımcı: XML'den Liste Çekme (Tedarikçiler için)
+// Yardımcı: XML'den Liste Çekme (Namespace Temizleyerek)
 const extractSuppliersFromXml = (xml: string) => {
     const suppliers: any[] = [];
-    // <Tedarikci> bloklarını bul
-    // Not: Namespace'ler değişebilir (a:Tedarikci veya sadece Tedarikci). Geniş bir regex kullanalım.
-    const supplierRegex = /<[^:]*:?Tedarikci>([\s\S]*?)<\/[^:]*:?Tedarikci>/g;
+
+    // 1. Tüm Namespace prefixlerini temizle (<a:Tanim> -> <Tanim>)
+    const cleanXml = xml.replace(/<[a-zA-Z0-9_]+:/g, '<').replace(/<\/[a-zA-Z0-9_]+:/g, '</');
+
+    // 2. <Tedarikci> bloklarını bul
+    const supplierRegex = /<Tedarikci>([\s\S]*?)<\/Tedarikci>/g;
     let match;
 
-    // Sonsuz döngüden kaçınmak için
     let safety = 0;
-    while ((match = supplierRegex.exec(xml)) !== null && safety < 1000) {
+    while ((match = supplierRegex.exec(cleanXml)) !== null && safety < 1000) {
         safety++;
         const content = match[1];
-        // ID ve Tanim değerlerini çek
-        // Namespace'li tagleri (a:ID gibi) yakalamak için regex'i esnek tutuyoruz
-        const idMatch = content.match(/<[^:]*:?ID>(\d+)<\/[^:]*:?ID>/);
-        const nameMatch = content.match(/<[^:]*:?Tanim>(.*?)<\/[^:]*:?Tanim>/);
+
+        const idMatch = content.match(/<ID>(\d+)<\/ID>/);
+        const nameMatch = content.match(/<Tanim>(.*?)<\/Tanim>/);
 
         if (idMatch && nameMatch) {
             suppliers.push({
                 ticimaxId: parseInt(idMatch[1]),
-                name: nameMatch[1] // XML entity decode yapılabilir gerekirse
+                name: nameMatch[1]
             });
         }
     }
@@ -64,6 +65,7 @@ export async function GET() {
     <SelectTedarikci xmlns="http://tempuri.org/">
       <UyeKodu>${userCode}</UyeKodu>
       <TedarikciID>0</TedarikciID>
+      <KategoriID>0</KategoriID>
     </SelectTedarikci>
   </soap:Body>
 </soap:Envelope>`;
