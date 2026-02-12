@@ -178,13 +178,13 @@ export function CategorySelector({
                         onChange={(e) => {
                             const selectedId = e.target.value;
                             setSelectedBrand(selectedId);
-                            const found = brands.find((b: any) => b.ticimaxId.toString() === selectedId);
+                            const found = brands.find((b: any) => (b.id?.toString() === selectedId) || (b.ticimaxId?.toString() === selectedId));
                             if (found) setSelectedBrandName(found.name);
                         }}
                     >
                         <option value="">Marka Seçiniz</option>
                         {brands.map((brand: any) => (
-                            <option key={brand.ticimaxId} value={brand.ticimaxId}>
+                            <option key={brand.id || brand.ticimaxId} value={brand.id || brand.ticimaxId}>
                                 {brand.name}
                             </option>
                         ))}
@@ -236,8 +236,8 @@ export function CategorySelector({
                     >
                         <option value="">Tedarikçi Seçiniz (Varsayılan: 1)</option>
                         {suppliers.map((sup) => (
-                            <option key={sup.id || sup.ticimaxId} value={sup.ticimaxId}>
-                                {sup.name} ({sup.ticimaxId})
+                            <option key={sup.id || sup.ticimaxId} value={sup.id || sup.ticimaxId}>
+                                {sup.name} ({sup.id || sup.ticimaxId})
                             </option>
                         ))}
                     </select>

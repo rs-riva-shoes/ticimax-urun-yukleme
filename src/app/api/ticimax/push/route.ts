@@ -82,17 +82,35 @@ export async function POST(request: Request) {
 
         // Teknik Detaylar (Attribute) mapping
         let technicalDetailsXml = '';
+        console.log("[Ticimax Push] Seçilen Özellikler (Raw):", JSON.stringify(payload.selectedAttributes, null, 2));
+
         if (payload.selectedAttributes && payload.selectedAttributes.length > 0) {
-            technicalDetailsXml = `
-          <arr:TeknikDetaylar>
-            ${payload.selectedAttributes.map((attr: any) => `
-              <arr:UrunKartiTeknikDetay>
-                <arr:DegerID>${attr.valueId}</arr:DegerID>
-                <arr:ID>0</arr:ID>
-                <arr:OzellikID>${attr.featureId}</arr:OzellikID>
-              </arr:UrunKartiTeknikDetay>
-            `).join('')}
-          </arr:TeknikDetaylar>`;
+            // Validate and Log each attribute
+            const validAttributes = payload.selectedAttributes.map((attr: any) => {
+                const vId = parseInt(attr.valueId);
+                const fId = parseInt(attr.featureId);
+
+                if (isNaN(vId) || isNaN(fId)) {
+                    console.error(`[Ticimax Push] HATALI ÖZELLİK: ValueID veya FeatureID sayısal değil!`, attr);
+                    // Return null to filter out, but log strictly
+                    return null;
+                }
+                return { ...attr, valueId: vId, featureId: fId };
+            }).filter((a: any) => a !== null);
+
+            if (validAttributes.length > 0) {
+                technicalDetailsXml = `
+              <arr:TeknikDetaylar>
+                ${validAttributes.map((attr: any) => `
+                  <arr:UrunKartiTeknikDetay>
+                    <arr:DegerID>${attr.valueId}</arr:DegerID>
+                    <arr:OzellikID>${attr.featureId}</arr:OzellikID>
+                  </arr:UrunKartiTeknikDetay>
+                `).join('')}
+              </arr:TeknikDetaylar>`;
+            } else {
+                console.warn("[Ticimax Push] UYARI: Hiçbir geçerli teknik detay bulunamadı (Hepsi hatalıydı).");
+            }
         }
 
         // Para birimi ID'si
@@ -189,6 +207,7 @@ export async function POST(request: Request) {
           <arr:SatisBirimi>Adet</arr:SatisBirimi>
           <arr:TedarikciID>${payload.supplierId || 1}</arr:TedarikciID>
           <arr:TedarikciKodu>${escapeXml(payload.productCode)}</arr:TedarikciKodu>
+          <arr:TeknikDetayGrupID>${payload.selectedAttributes?.[0]?.groupId || 0}</arr:TeknikDetayGrupID>
           ${technicalDetailsXml}
           <arr:ToplamStokAdedi>${totalQty}</arr:ToplamStokAdedi>
           <arr:UcretsizKargo>false</arr:UcretsizKargo>
@@ -202,6 +221,7 @@ export async function POST(request: Request) {
         <arr:KategoriGuncelle>true</arr:KategoriGuncelle>
         <arr:MarkaGuncelle>true</arr:MarkaGuncelle>
         <arr:TedarikciKodunaGoreGuncelle>true</arr:TedarikciKodunaGoreGuncelle>
+        <arr:TeknikDetayGuncelle>true</arr:TeknikDetayGuncelle>
         <arr:UrunAdiGuncelle>true</arr:UrunAdiGuncelle>
         <arr:UrunResimGuncelle>true</arr:UrunResimGuncelle>
       </ukAyar>

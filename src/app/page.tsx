@@ -4,6 +4,8 @@ import Link from "next/link";
 import { Plus, Box, PackageOpen, ArrowRight, BarChart } from "lucide-react";
 import { adminDb } from "@/lib/firebase-admin";
 
+import { SyncDataButtons } from "@/components/settings/sync-data-buttons";
+
 export const revalidate = 0; // Always fresh data
 
 export default async function Dashboard() {
@@ -22,7 +24,7 @@ export default async function Dashboard() {
 
   return (
     <div className="container mx-auto py-10 space-y-8">
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-end">
         <div>
           <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
             Ticimax Panel
@@ -31,17 +33,21 @@ export default async function Dashboard() {
             Ürünlerinizi yönetin, AI ile içerik üretin ve Ticimax'a gönderin.
           </p>
         </div>
-        <div className="flex gap-3">
-          <Link href="/products">
-            <Button variant="outline" className="gap-2">
-              <Box className="w-4 h-4" /> Tüm Ürünler
-            </Button>
-          </Link>
-          <Link href="/products/new">
-            <Button variant="premium" className="gap-2 shadow-lg hover:shadow-xl transition-all">
-              <Plus className="w-4 h-4" /> Yeni Ürün Ekle
-            </Button>
-          </Link>
+        <div className="flex flex-col gap-4 items-end">
+          <SyncDataButtons />
+
+          <div className="flex items-center gap-3">
+            <Link href="/products">
+              <Button variant="outline" className="gap-2">
+                <Box className="w-4 h-4" /> Tüm Ürünler
+              </Button>
+            </Link>
+            <Link href="/products/new">
+              <Button variant="premium" className="gap-2 shadow-lg hover:shadow-xl transition-all">
+                <Plus className="w-4 h-4" /> Yeni Ürün Ekle
+              </Button>
+            </Link>
+          </div>
         </div>
       </div>
 

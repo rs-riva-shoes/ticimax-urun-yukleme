@@ -27,16 +27,17 @@ interface AttributeValue {
 interface Attribute {
     featureId: number;
     name: string;
+    groupId?: number;
     values: AttributeValue[];
 }
 
 interface ProductFormProps {
     attributes: Attribute[];
+    brands: any[];
+    suppliers: any[];
 }
 
-
-
-export function ProductForm({ attributes }: ProductFormProps) {
+export function ProductForm({ attributes, brands: initialBrands, suppliers: initialSuppliers }: ProductFormProps) {
     // Files & Basic Info
     const [files, setFiles] = useState<File[]>([]);
     const [title, setTitle] = useState("");
@@ -49,7 +50,6 @@ export function ProductForm({ attributes }: ProductFormProps) {
 
     // Categories & Brand
 
-
     // Dual Category System
     const [hierarchicalCategoryIds, setHierarchicalCategoryIds] = useState<string[]>([]);
     const [hierarchicalCategoryName, setHierarchicalCategoryName] = useState("");
@@ -59,10 +59,10 @@ export function ProductForm({ attributes }: ProductFormProps) {
 
     const [selectedBrand, setSelectedBrand] = useState("");
     const [selectedBrandName, setSelectedBrandName] = useState("");
-    const [brands, setBrands] = useState<any[]>([]); // Markalar listesi
+    const [brands, setBrands] = useState<any[]>(initialBrands); // Markalar listesi
 
     // Suppliers
-    const [suppliers, setSuppliers] = useState<any[]>([]);
+    const [suppliers, setSuppliers] = useState<any[]>(initialSuppliers);
     const [selectedSupplier, setSelectedSupplier] = useState("1"); // Varsayılan: 1
 
     // Pricing
@@ -105,42 +105,8 @@ export function ProductForm({ attributes }: ProductFormProps) {
     const [isSaving, setIsSaving] = useState(false);
     const [savedProductId, setSavedProductId] = useState<string | null>(null);
 
-    // Initial Data Fetch (Sequential to avoid Rate Limiting)
-    useEffect(() => {
-        const loadData = async () => {
-            // 1. Fetch Suppliers
-            try {
-                const reqSup = await fetch("/api/settings/suppliers");
-                const dataSup = await reqSup.json();
-                if (dataSup.success) {
-                    setSuppliers(dataSup.suppliers);
-                } else {
-                    console.error("Suppliers Error:", dataSup.error);
-                }
-            } catch (err) {
-                console.error("Failed to load suppliers", err);
-            }
+    // Initial Data Fetch removed - using static data passed from page
 
-            // 2. Wait 2 seconds (Ticimax Rate Limit protection)
-            // Ticimax ardışık isteklerde hata verebiliyor.
-            await new Promise(resolve => setTimeout(resolve, 2000));
-
-            // 3. Fetch Brands
-            try {
-                const reqBrands = await fetch("/api/settings/brands");
-                const dataBrands = await reqBrands.json();
-                if (dataBrands.success && dataBrands.brands) {
-                    setBrands(dataBrands.brands);
-                } else {
-                    console.error("Brands Error:", dataBrands?.error);
-                }
-            } catch (err) {
-                console.error("Failed to load brands", err);
-            }
-        };
-
-        loadData();
-    }, []);
 
     // Add New Supplier Handler
     const handleAddSupplier = async (name: string, _ignoredId: string) => {
@@ -448,7 +414,7 @@ export function ProductForm({ attributes }: ProductFormProps) {
                 }
 
                 const valName = attr?.values.find((val) => val.valueId.toString() === finalValueId)?.name;
-                return { featureId: k, valueId: finalValueId, name: attrName, valueName: valName };
+                return { featureId: k, valueId: finalValueId, name: attrName, valueName: valName, groupId: attr?.groupId || 0 };
             }).filter(item => item.valueId !== "INVALID"),
             _meta: {
                 imageCount: files.length,
