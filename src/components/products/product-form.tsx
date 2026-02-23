@@ -553,7 +553,7 @@ export function ProductForm({ attributes, brands: initialBrands, suppliers: init
     };
 
     return (
-        <div className="space-y-8 max-w-5xl mx-auto p-6 relative">
+        <>
             <ReviewModal
                 showReview={showReview}
                 setShowReview={setShowReview}
@@ -562,50 +562,69 @@ export function ProductForm({ attributes, brands: initialBrands, suppliers: init
                 pushStatus={pushStatus}
             />
 
-            {/* Header */}
-            <div className="flex justify-between items-center">
-                <div>
-                    <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-400 bg-clip-text text-transparent">
-                        Yeni Ürün
-                    </h1>
-                    <p className="text-muted-foreground mt-2">
-                        Fotoğrafları yükleyin, asortiyi yönetin ve Ticimax&apos;a gönderin.
-                    </p>
-                </div>
-                <div className="flex gap-3">
-                    <Button
-                        variant="outline"
-                        onClick={handleSaveDraft}
-                        disabled={isSaving || pushStatus === "pushing"}
-                    >
-                        {isSaving ? (
-                            <>
-                                <Wand2 className="w-4 h-4 animate-spin mr-2" />
-                                Kaydediliyor...
-                            </>
-                        ) : (
-                            "Taslağı Kaydet"
-                        )}
-                    </Button>
-                    <Button variant="premium" className="gap-2" onClick={() => setShowReview(true)}>
-                        İncele & Gönder <Eye className="w-4 h-4" />
-                    </Button>
+            {/* ─── Sticky Header Bar ─── */}
+            <div className="sticky top-0 z-40 bg-white/80 backdrop-blur-lg border-b border-stone-200/60">
+                <div className="max-w-5xl mx-auto px-6 py-3 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center text-white font-bold text-xs shadow-md">
+                            +
+                        </div>
+                        <div>
+                            <h1 className="text-lg font-bold text-stone-900 leading-tight">Yeni Ürün</h1>
+                            <p className="text-xs text-stone-400">Bilgileri doldurun, sonra gönderin</p>
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={handleSaveDraft}
+                            disabled={isSaving || pushStatus === "pushing"}
+                            className="border-stone-300 hover:bg-stone-50 text-xs h-8"
+                        >
+                            {isSaving ? (
+                                <>
+                                    <Wand2 className="w-3 h-3 animate-spin mr-1.5" />
+                                    Kaydediliyor...
+                                </>
+                            ) : (
+                                "Taslak Kaydet"
+                            )}
+                        </Button>
+                        <button
+                            className="btn-arslan flex items-center gap-1.5 text-xs !py-1.5 !px-4"
+                            onClick={() => setShowReview(true)}
+                        >
+                            <Eye className="w-3.5 h-3.5" />
+                            İncele & Gönder
+                        </button>
+                    </div>
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 items-start">
-                {/* Left Column (2/3) */}
-                <div className="lg:col-span-2 space-y-8">
-                    {/* Image Upload - Ayrı kart */}
-                    <ImageUpload files={files} setFiles={setFiles} />
+            {/* ─── Main Content ─── */}
+            <div className="max-w-5xl mx-auto px-6 py-8 space-y-6">
 
-                    {/* General Product Info & Pricing - Birleşik kart */}
-                    <Card className="shadow-md border-muted">
-                        <CardHeader>
-                            <CardTitle>Genel Bilgiler</CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-8">
-                            {/* Temel Bilgiler */}
+                {/* ① Fotoğraflar */}
+                <section>
+                    <div className="flex items-center gap-2.5 mb-3">
+                        <span className="w-6 h-6 rounded-full bg-amber-100 text-amber-700 text-xs font-bold flex items-center justify-center">1</span>
+                        <h2 className="text-sm font-bold text-stone-700 uppercase tracking-wide">Fotoğraflar</h2>
+                    </div>
+                    <div className="stat-card !p-0 overflow-hidden">
+                        <ImageUpload files={files} setFiles={setFiles} />
+                    </div>
+                </section>
+
+                {/* ② Ürün Bilgileri + Kategori */}
+                <section>
+                    <div className="flex items-center gap-2.5 mb-3">
+                        <span className="w-6 h-6 rounded-full bg-amber-100 text-amber-700 text-xs font-bold flex items-center justify-center">2</span>
+                        <h2 className="text-sm font-bold text-stone-700 uppercase tracking-wide">Ürün Bilgileri</h2>
+                    </div>
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+                        {/* Sol: Ürün adı, açıklama, stok kodu */}
+                        <div className="lg:col-span-2 stat-card !p-5">
                             <ProductInfo
                                 title={title}
                                 setTitle={setTitle}
@@ -621,52 +640,10 @@ export function ProductForm({ attributes, brands: initialBrands, suppliers: init
                                 nameSuggesting={nameSuggesting}
                                 hasFiles={files.length > 0}
                             />
-
-                            {/* Ayırıcı ve Fiyatlandırma */}
-                            <div className="pt-6 border-t border-border">
-                                <h3 className="text-sm font-semibold mb-4 text-muted-foreground">Fiyatlandırma</h3>
-                                <PricingInfo
-                                    purchasePrice={purchasePrice}
-                                    setPurchasePrice={setPurchasePrice}
-                                    salePrice={salePrice}
-                                    setSalePrice={setSalePrice}
-                                    discountPrice={discountPrice}
-                                    setDiscountPrice={setDiscountPrice}
-                                    taxRate={taxRate}
-                                    setTaxRate={setTaxRate}
-                                />
-                            </div>
-
-                            {/* Kargo Bilgileri */}
-                            <div className="pt-6 border-t border-border">
-                                <ShippingInfo dimensions={dimensions} setDimensions={setDimensions} />
-                            </div>
-                        </CardContent>
-                    </Card>
-
-                    {/* Variant Manager */}
-                    <VariantManager
-                        variants={variants}
-                        setVariants={setVariants}
-                        productCode={productCode}
-                        selectedCategoryId={productTypeCategoryId}
-                        categoryName={productTypeCategoryName}
-                        files={files}
-                        colorSettings={colorSettings}
-                        setColorSettings={setColorSettings}
-                        productTitle={title}
-                    />
-                </div>
-
-                {/* Right Column (1/3) - Sticky */}
-                <div className="space-y-6 lg:sticky lg:top-8 h-fit">
-                    {/* Kategori ve Marka Seçimi */}
-                    <Card className="shadow-md border-muted">
-                        <CardHeader>
-                            <CardTitle>Kategori & Marka</CardTitle>
-                            <CardDescription>Ürün sınıflandırması</CardDescription>
-                        </CardHeader>
-                        <CardContent>
+                        </div>
+                        {/* Sağ: Kategori & Marka */}
+                        <div className="stat-card !p-5">
+                            <h3 className="text-xs font-bold text-stone-500 uppercase tracking-wide mb-3">Sınıflandırma</h3>
                             <CategorySelector
                                 hierarchicalCategoryName={hierarchicalCategoryName}
                                 setHierarchicalCategoryName={setHierarchicalCategoryName}
@@ -685,26 +662,74 @@ export function ProductForm({ attributes, brands: initialBrands, suppliers: init
                                 setSelectedSupplier={setSelectedSupplier}
                                 onAddSupplier={handleAddSupplier}
                             />
-                        </CardContent>
-                    </Card>
+                        </div>
+                    </div>
+                </section>
 
-                    {/* Özellikler */}
-                    <Card className="shadow-md border-muted">
-                        <CardHeader>
-                            <CardTitle>Ürün Özellikleri</CardTitle>
-                            <CardDescription>Teknik detaylar</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="space-y-4">
+                {/* ③ Fiyat & Kargo */}
+                <section>
+                    <div className="flex items-center gap-2.5 mb-3">
+                        <span className="w-6 h-6 rounded-full bg-amber-100 text-amber-700 text-xs font-bold flex items-center justify-center">3</span>
+                        <h2 className="text-sm font-bold text-stone-700 uppercase tracking-wide">Fiyat & Kargo</h2>
+                    </div>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                        <div className="stat-card !p-5">
+                            <h3 className="text-xs font-bold text-stone-500 uppercase tracking-wide mb-3">Fiyatlandırma</h3>
+                            <PricingInfo
+                                purchasePrice={purchasePrice}
+                                setPurchasePrice={setPurchasePrice}
+                                salePrice={salePrice}
+                                setSalePrice={setSalePrice}
+                                discountPrice={discountPrice}
+                                setDiscountPrice={setDiscountPrice}
+                                taxRate={taxRate}
+                                setTaxRate={setTaxRate}
+                            />
+                        </div>
+                        <div className="stat-card !p-5">
+                            <ShippingInfo dimensions={dimensions} setDimensions={setDimensions} />
+                        </div>
+                    </div>
+                </section>
+
+                {/* ④ Asorti / Varyantlar */}
+                <section>
+                    <div className="flex items-center gap-2.5 mb-3">
+                        <span className="w-6 h-6 rounded-full bg-amber-100 text-amber-700 text-xs font-bold flex items-center justify-center">4</span>
+                        <h2 className="text-sm font-bold text-stone-700 uppercase tracking-wide">Asorti & Varyantlar</h2>
+                    </div>
+                    <VariantManager
+                        variants={variants}
+                        setVariants={setVariants}
+                        productCode={productCode}
+                        selectedCategoryId={productTypeCategoryId}
+                        categoryName={productTypeCategoryName}
+                        files={files}
+                        colorSettings={colorSettings}
+                        setColorSettings={setColorSettings}
+                        productTitle={title}
+                    />
+                </section>
+
+                {/* ⑤ Teknik Özellikler */}
+                {attributes.length > 0 && (
+                    <section>
+                        <div className="flex items-center gap-2.5 mb-3">
+                            <span className="w-6 h-6 rounded-full bg-amber-100 text-amber-700 text-xs font-bold flex items-center justify-center">5</span>
+                            <h2 className="text-sm font-bold text-stone-700 uppercase tracking-wide">Teknik Özellikler</h2>
+                            <span className="text-[10px] text-stone-400 ml-1">{attributes.length} özellik</span>
+                        </div>
+                        <div className="stat-card !p-5">
+                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-3">
                                 {attributes.map(attr => (
-                                    <div key={attr.featureId} className="space-y-1">
-                                        <label className="text-xs font-semibold">{attr.name}</label>
+                                    <div key={attr.featureId} className="flex flex-col gap-1">
+                                        <label className="text-[10px] font-semibold text-stone-400 uppercase tracking-wider">{attr.name}</label>
                                         <select
-                                            className="w-full text-sm p-2 rounded-md border bg-background/50"
+                                            className="w-full text-sm py-1.5 px-2 rounded-lg border border-stone-200 bg-stone-50/50 hover:border-amber-300 focus:border-amber-500 focus:ring-1 focus:ring-amber-500/20 transition-colors outline-none"
                                             value={selectedAttributes[attr.featureId] || ""}
                                             onChange={(e) => setSelectedAttributes(prev => ({ ...prev, [attr.featureId]: e.target.value }))}
                                         >
-                                            <option value="">Seçiniz</option>
+                                            <option value="">—</option>
                                             {attr.values.map(val => (
                                                 <option key={val.valueId} value={val.valueId}>{val.name}</option>
                                             ))}
@@ -712,9 +737,12 @@ export function ProductForm({ attributes, brands: initialBrands, suppliers: init
                                     </div>
                                 ))}
                             </div>
-                        </CardContent>
-                    </Card>
-                </div>
+                        </div>
+                    </section>
+                )}
+
+                {/* Spacer */}
+                <div className="h-4" />
             </div>
 
             <ReviewModal
@@ -725,6 +753,7 @@ export function ProductForm({ attributes, brands: initialBrands, suppliers: init
                 handlePush={handlePush}
                 pushStatus={pushStatus}
             />
-        </div>
+        </>
     );
 }
+

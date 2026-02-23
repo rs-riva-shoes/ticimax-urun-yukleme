@@ -1,0 +1,25 @@
+<svg viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Shield background -->
+  <path d="M128 12 L220 60 L220 180 L128 236 L36 180 L36 60 Z" fill="url(#shield_grad)" stroke="#78350F" strokeWidth="4"/>
+  <!-- Mane (stylized spikes) -->
+  <path d="M128 20L145 50L175 40L185 70L215 75L205 105L230 128L205 151L215 181L185 186L175 216L145 206L128 236L111 206L81 216L71 186L41 181L51 151L26 128L51 105L41 75L71 70L81 40L111 50L128 20Z" fill="url(#mane_grad)"/>
+  <!-- Face -->
+  <path d="M128 80C100 80 85 100 85 130C85 160 100 185 128 185C156 185 171 160 171 130C171 100 156 80 128 80Z" fill="url(#face_grad)"/>
+  <!-- Letter A (Arslan) -->
+  <path d="M118 150 L128 110 L138 150 Z" fill="#fff"/>
+  <defs>
+    <linearGradient id="shield_grad" x1="36" y1="12" x2="220" y2="236" gradientUnits="userSpaceOnUse">
+      <stop stopColor="#F59E0B"/>
+      <stop offset="1" stopColor="#D97706"/>
+    </linearGradient>
+    <linearGradient id="mane_grad" x1="40" y1="40" x2="216" y2="216" gradientUnits="userSpaceOnUse">
+      <stop stopColor="#F59E0B"/>
+      <stop offset="0.5" stopColor="#D97706"/>
+      <stop offset="1" stopColor="#B45309"/>
+    </linearGradient>
+    <linearGradient id="face_grad" x1="100" y1="100" x2="156" y2="156" gradientUnits="userSpaceOnUse">
+      <stop stopColor="#FBBF24"/>
+      <stop offset="1" stopColor="#F59E0B"/>
+    </linearGradient>
+  </defs>
+</svg>
