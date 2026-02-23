@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Plus, Edit, Trash2, Package } from "lucide-react";
 import Image from "next/image";
+import ProductRow from "@/components/products/ProductRow";
 
 // Revalidate every 0 seconds (always fresh)
 export const revalidate = 0;
@@ -58,60 +59,7 @@ export default async function ProductsPage() {
                             </thead>
                             <tbody>
                                 {products.map((product: any) => (
-                                    <tr key={product.id} className="border-b last:border-0 hover:bg-muted/30 transition-colors">
-                                        <td className="p-4">
-                                            <div className="relative w-12 h-16 bg-muted rounded overflow-hidden border">
-                                                {product.images?.[0] ? (
-                                                    <Image
-                                                        src={product.images[0]}
-                                                        alt={product.title}
-                                                        fill
-                                                        className="object-cover"
-                                                    />
-                                                ) : (
-                                                    <div className="flex items-center justify-center h-full text-xs text-muted-foreground">
-                                                        No Img
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </td>
-                                        <td className="p-4 font-medium">
-                                            <div className="line-clamp-2">{product.title || "İsimsiz Ürün"}</div>
-                                            <div className="text-xs text-muted-foreground mt-1 font-mono">{product.sku || (product.variants?.[0]?.sku) || "-"}</div>
-                                        </td>
-                                        <td className="p-4 text-muted-foreground">
-                                            {product.categoryName || "-"}
-                                            <div className="text-xs">{product.hierarchicalCategoryName}</div>
-                                        </td>
-                                        <td className="p-4 text-muted-foreground">
-                                            {product.brandName || "-"}
-                                        </td>
-                                        <td className="p-4 font-mono font-medium">
-                                            {product.price?.sale ? `${product.price.sale} ₺` : "-"}
-                                        </td>
-                                        <td className="p-4 text-center">
-                                            <div className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">
-                                                {product._meta?.totalStock || 0}
-                                            </div>
-                                        </td>
-                                        <td className="p-4 text-center">
-                                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize
-                                                ${product.status === 'success' ? 'bg-green-100 text-green-800' :
-                                                    product.status === 'draft' ? 'bg-gray-100 text-gray-800' : 'bg-red-100 text-red-800'}`}>
-                                                {product.status || 'draft'}
-                                            </span>
-                                        </td>
-                                        <td className="p-4 text-right">
-                                            <div className="flex justify-end gap-2">
-                                                <Button size="icon" variant="ghost" className="h-8 w-8">
-                                                    <Edit className="w-4 h-4" />
-                                                </Button>
-                                                <Button size="icon" variant="ghost" className="h-8 w-8 text-destructive hover:text-destructive">
-                                                    <Trash2 className="w-4 h-4" />
-                                                </Button>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                    <ProductRow key={product.id} product={product} />
                                 ))}
                             </tbody>
                         </table>

@@ -506,6 +506,33 @@ export function ProductForm({ attributes, brands: initialBrands, suppliers: init
 
                 if (data.success) {
                     setPushStatus("success");
+
+                    // Firebase'e "Yayınlandı" (published) olarak kaydet
+                    try {
+                        const productData = {
+                            ...payload,
+                            id: savedProductId,
+                            images: imageUrls,
+                            status: "published",
+                            ticimaxId: data.ticimaxId,
+                            updatedAt: new Date().toISOString(),
+                            ...(!savedProductId ? { createdAt: new Date().toISOString() } : {})
+                        };
+
+                        const dbResp = await fetch("/api/products/save", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify(productData),
+                        });
+
+                        const dbData = await dbResp.json();
+                        if (dbData.success) {
+                            setSavedProductId(dbData.productId);
+                        }
+                    } catch (dbErr) {
+                        console.error("Firebase update error after push:", dbErr);
+                    }
+
                     alert(`✅ Başarılı! Ticimax ID: ${data.ticimaxId}`);
                 } else {
                     setPushStatus("error");

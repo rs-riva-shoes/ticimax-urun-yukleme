@@ -18,31 +18,27 @@ export async function POST(req: Request) {
             }
         }));
 
-        const prompt = `Sen bir e-ticaret ürün isimlendirme ve SEO uzmanısın. Verilen ürün görsellerini analiz ederek arama motorlarında (Google) üst sıralara çıkacak, tıklama oranı yüksek, profesyonel bir ürün başlığı oluştur.
+        const prompt = `Sen Trendyol, Hepsiburada gibi pazar yerlerinde satış yapan, SEO odaklı ürün isimlendirme uzmanısın.
+**GÖREV:** Verilen görseli analiz et ve arama motorlarında maksimum görünürlük sağlayacak "Anahtar Kelime Odaklı" (Keyword Stuffing stili) bir ürün başlığı oluştur.
 
-**GÖREV:**
-1. Görselleri detaylı analiz et.
-2. Ürünün kullanım alanını ve hedef kitlesini belirle (Örn: Çocuk terliği ise -> Okul, Kreş, Ev, Plaj vb.).
-3. **KESİNLİKLE RENK BİLGİSİ EKLENMEYECEK.** (Renk varyantlarda seçileceği için başlıkta olmamalı).
-4. İlgili SEO anahtar kelimelerini doğal bir şekilde başlığa yedir.
-5. Marka belirtilmediyse marka adı kullanma.
-6. Başlık 4-8 kelime arasında, çarpıcı ve açıklayıcı olsun.
+**BAŞLIK STRATEJİSİ (Örnekteki gibi olmalı):**
+"Kadın Yüksek Taban Ortopedik Eva Aşçı Hastane Havuz Hemşire Doktor Plaj Bahçe Cross"
+
+**BAŞLIK YAPISI:**
+[Cinsiyet] + [Ana Özellikler] + [Materyal] + [Kullanım Alanları/Meslekler] + [Tarz/Model]
 
 **KURALLAR:**
-- ❌ YASAK: "Kırmızı", "Mavi", "Siyah" gibi renk isimleri başlıkta ASLA geçmeyecek.
-- ✅ ZORUNLU: Ürün tipine göre kullanım yeri belirtilecek (Örn: "Ortopedik Kreş ve Okul Terliği", "Günlük Rahat Yürüyüş Ayakkabısı").
-- ✅ ZORUNLU: Türkçe karakter uyumu ve imla kurallarına dikkat edilecek.
-
-**ÖRNEK SENARYOLAR:**
-- Girdi: Çocuk Terliği görseli -> Çıktı: "Ortopedik Kaymaz Tabanlı Kreş ve Okul İçi Çocuk Terliği"
-- Girdi: Kadın Topuklu Ayakkabı -> Çıktı: "Konfor Tabanlı Şık Ofis ve Davet Stiletto"
-- Girdi: Erkek Spor Ayakkabı -> Çıktı: "Hafif Tabanlı Nefes Alan Günlük Koşu ve Yürüyüş Ayakkabısı"
+1. **ASLA VE, VEYA, İLE KULLANMA:** Kelimeler sadece boşlukla ayrılsın.
+2. **RENK YAZMA:** Renk varyantta seçileceği için başlıkta olma-ma-lı.
+3. **BOLCA ANAHTAR KELİME:** Ürünün kullanılabileceği her yeri ve durumu yaz. (Örn: Terlik ise -> Hastane, Okul, Plaj, Balkon, Bahçe, Aşçı, Hemşire, Doktor, Temizlik).
+4. **TEKNİK DETAYLAR:** Varsa 'Anatomik', 'Ortopedik', 'Kaymaz', 'Yıkanabilir', 'Terletmez' gibi teknik terimleri ekle.
+5. **UZUNLUK:** Başlık dolu dolu olsun, kısa kesme.
 
 **YANIT FORMATI (JSON):**
 {
-  "suggestedName": "önerilen ürün adı",
-  "productType": "ürün tipi (örn: sneaker, bot, sandalet)",
-  "confidence": "yüksek/orta/düşük"
+  "suggestedName": "oluşturulan uzun başlık",
+  "productType": "tahmin edilen ürün tipi",
+  "confidence": "yüksek"
 }
 
 **KRİTİK:** Sadece geçerli bir JSON nesnesi döndür.`;

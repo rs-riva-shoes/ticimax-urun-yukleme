@@ -23,20 +23,27 @@ export async function POST(req: Request) {
         const brand = data?.brand || "Brand";
 
         const prompt = `
-      You are an expert e-commerce copywriter for a Turkish fashion/retail site (Ticimax).
-      Generate professional product content for:
-      Title: ${title}
-      Brand: ${brand}
-      Category: ${categoryName}
+      Sen Trendyol/Hepsiburada stili, yapılandırılmış ürün içerikleri hazırlayan uzman bir editörsün.
+      Aşağıdaki ürün için teknik ve profesyonel bir içerik oluştur:
+      Başlık: ${title}
+      Marka: ${brand}
+      Kategori: ${categoryName}
       
-      Output strict JSON format with keys:
-      - descriptionHtml: (HTML string, use <p>, <ul>, <li>, <strong>, avoid <h1>/<h2>, make it SEO friendly and rich)
-      - bulletPoints: (Array of strings, 3-5 key features)
-      - technicalDetails: (Array of { label: string, value: string } pairs, e.g. [{"label": "Materyal", "value": "%100 Pamuk"}])
-      - keywords: (Array of strings, 10 SEO keywords)
+      ÇIKTI FORMATI (JSON):
+      - descriptionHtml: (HTML formatında. SADECE <ul> listesi oluştur. Her madde "Özellik + Fayda" şeklinde olmalı.)
+      - bulletPoints: (En önemli 3-5 özellik, kısa ve net)
+      - technicalDetails: (Örn: [{"label": "Materyal", "value": "%100 Pamuk"}])
+      - keywords: (10 adet SEO anahtar kelimesi, virgülle ayrılmış değil array olarak)
       
-      Language: Turkish.
-      Tone: Professional, persuasive, SEO-optimized.
+      DİL: Türkçe.
+      TON: Kurumsal, net, yapılandırılmış.
+      
+      FORMAT ÖRNEĞİ (HTML):
+      <ul>
+        <li><strong>Ortopedik Tasarım:</strong> Ayak anatomisine uygun yapısıyla gün boyu konfor sağlar.</li>
+        <li><strong>Kaymaz Taban:</strong> Güvenli adımlar atmanızı destekler.</li>
+      </ul>
+      <div style="font-size:12px; color:#666; margin-top:10px;">Stüdyo çekimlerinde renkler ışık farklılığından dolayı değişiklik gösterebilir.</div>
     `;
 
         const completion = await openai.chat.completions.create({

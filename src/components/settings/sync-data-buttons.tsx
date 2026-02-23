@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Loader2, RefreshCw, Box, User, Briefcase } from "lucide-react";
+import { Loader2, RefreshCw, Box, User, Briefcase, Package } from "lucide-react";
 
-type SyncType = "attributes" | "brands" | "suppliers";
+type SyncType = "attributes" | "brands" | "suppliers" | "products";
 
 interface SyncButtonProps {
     type: SyncType;
@@ -16,7 +16,8 @@ interface SyncButtonProps {
 const syncOptions: SyncButtonProps[] = [
     { type: "attributes", label: "Teknik Detay", icon: Box, apiPath: "/api/settings/attributes/sync" },
     { type: "brands", label: "Marka", icon: User, apiPath: "/api/settings/brands/sync" },
-    { type: "suppliers", label: "Tedarikçi", icon: Briefcase, apiPath: "/api/settings/suppliers/sync" }
+    { type: "suppliers", label: "Tedarikçi", icon: Briefcase, apiPath: "/api/settings/suppliers/sync" },
+    { type: "products", label: "Ürünler", icon: Package, apiPath: "/api/settings/products/sync" }
 ];
 
 export function SyncDataButtons() {

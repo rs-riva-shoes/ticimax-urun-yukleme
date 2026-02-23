@@ -41,6 +41,7 @@ export function VariantManager({
     productTitle
 }: VariantManagerProps) {
     const [isGeneratingBulkSKU, setIsGeneratingBulkSKU] = useState(false);
+    const [isDoubleSize, setIsDoubleSize] = useState(false); // Çift numara (36-37) modu
 
     // Bulk variant generation state
     const [bulkSizeStart, setBulkSizeStart] = useState("");
@@ -187,13 +188,19 @@ export function VariantManager({
         const newVariants: Variant[] = [];
 
         for (const color of colorList) {
-            for (let size = start; size <= end; size++) {
+            // Çift numara mantığı: 36-37, 38-39 gibi ikişer atlayarak gider
+            const step = isDoubleSize ? 2 : 1;
+
+            for (let size = start; size <= end; size += step) {
+                // Çift numaraysa format "36-37", değilse "36"
+                const sizeStr = isDoubleSize ? `${size}-${size + 1}` : size.toString();
+
                 newVariants.push({
-                    size: size.toString(),
+                    size: sizeStr,
                     color: color,
-                    qty: 10,
+                    qty: 10, // Default qty
                     sku: productCode,
-                    barcode: generateBarcode(productCode, color, size.toString())
+                    barcode: generateBarcode(productCode, color, sizeStr)
                 });
             }
         }
@@ -251,7 +258,20 @@ export function VariantManager({
                                 className="h-9 text-sm"
                             />
                         </div>
-                        <div className="col-span-3 flex items-end">
+                        <div className="col-span-12 flex items-center gap-2 mb-2">
+                            <input
+                                type="checkbox"
+                                id="doubleSize"
+                                className="w-4 h-4 rounded border-gray-300 text-purple-600 focus:ring-purple-500"
+                                checked={isDoubleSize}
+                                onChange={(e) => setIsDoubleSize(e.target.checked)}
+                            />
+                            <label htmlFor="doubleSize" className="text-sm font-medium text-gray-700 dark:text-gray-300 select-none cursor-pointer">
+                                Çift Numara (Örn: 36-37, 38-39)
+                            </label>
+                        </div>
+
+                        <div className="col-span-12 flex justify-end">
                             <Button
                                 onClick={generateBulkVariants}
                                 className="w-full h-9 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 gap-2"

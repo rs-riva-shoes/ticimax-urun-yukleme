@@ -80,48 +80,52 @@ export async function POST(req: Request) {
 
         const cleanTitle = title || "Belirtilmemiş (Görsellere göre analiz et)";
 
-        const prompt = `Sen deneyimli bir e-ticaret içerik editörü ve SEO uzmanısın. Verilen ürün görselleri ve (varsa) başlığı analiz ederek, müşteriyi satın almaya ikna edecek **ZENGİN, PROFESYONEL VE DETAYLI** bir ürün açıklaması yazmalısın. Ayrıca doğru kategorileri ve özellikleri seçmelisin.
+        const prompt = `Sen uzman bir ürün sınıflandırma ve teknik analiz yapay zekasısın.
+**GÖREVLER:**
+1. **KATEGORİ TESPİTİ:** Ürünün görselini analiz et ve aşağıdaki kategoriler arasından EN DOĞRU olanı seç. Yanlış kategori seçimi kabul edilemez.
+2. **TEKNİK DETAY TESPİTİ:** Görseldeki ince detayları (bağcık, desen, topuk boyu, materyal) analiz et ve listedeki seçeneklerle eşleştir.
 
 **GİRDİLER:**
 - **ÜRÜN BAŞLIĞI:** ${cleanTitle}
-- **HİYERARŞİK KATEGORİLER:**
+- **HİYERARŞİK KATEGORİ LISTESI (Sadece buradan seç):**
 ${hierarchicalCategoryList}
-- **ÜRÜN TİPİ KATEGORİLERİ:**
+
+- **ÜRÜN TİPİ LISTESI (Sadece buradan seç):**
 ${productTypeCategoryList}
-- **MEVCUT TEKNİK ÖZELLİKLER:**
+
+- **TEKNİK ÖZELLİK HAVUZU:**
 ${attributesList}
 
-**1. DETAYLI ÜRÜN AÇIKLAMASI (HTML FORMATINDA):**
-- **Hedef:** Müşteriye ürünü hayal ettir, özelliklerini ve faydalarını "dolu dolu" ve "pazarlama diliyle" anlat.
-- **İçerik:**
-  - Giriş: Ürünü çekici bir dille tanıt (1 paragraf).
-  - Kullanım Alanları: Nerede giyilir/kullanılır? (Örn: Okul, kreş, ofis, günlük, düğün). İlgili anahtar kelimeleri (keywords) bolca kullan.
-  - Özellikler: Konfor, malzeme kalitesi, taban yapısı vb. maddeler halinde vurgula.
-  - SEO: İçerikte "rahat", "ortopedik", "şık", "trend", "yeni sezon" gibi uygun anahtar kelimeleri geçir.
-- **Format:** HTML etiketleri kullan (p, ul, li, strong, h3).
+**ADIM 1: AÇIKLAMA (HTML)**
+Müşteriyi ikna edecek, SEO uyumlu, "Özellik + Fayda" yapısında madde madde açıklama yaz. (<ul><li>...</li></ul>)
 
-**2. KATEGORİ VE ÖZELLİK SEÇİMİ:**
-- Görselleri ve ürün başlığını analiz et.
-- **ZORUNLU:** Hem Hiyerarşik Kategoriden hem de Ürün Tipi Kategorisinden en doğru seçimi yap.
-- Teknik özellikleri görselden çıkarıp listedeki değerlerle eşleştir.
+**ADIM 2: KATEGORİ SEÇİMİ (KRİTİK)**
+- Ürün bir TERLİK mi? O zaman "Terlik" kategorisini seç. "Ayakkabı" seçme.
+- Ürün bir BOT mu? O zaman "Bot" kategorisini seç.
+- Hiyerarşik kategoride en alt kırılımı (örn: "Kadın > Terlik > Parmak Arası") bulmaya çalış.
+
+**ADIM 3: TEKNİK ÖZELLİK EŞLEŞTİRME (ZORUNLU)**
+- "TEKNİK ÖZELLİK HAVUZU"ndaki her bir özelliği tek tek kontrol et.
+- Görselde "Cırtlı" mı gördün? Listede "Kapama Şekli" altında "Cırtlı" varsa ID'sini al ve ekle.
+- Görselde "Çiçekli" mi gördün? "Desen" altında "Çiçekli" varsa ekle.
+- **HEDEF:** En az 3-4 tane teknik özellik seçilmiş olmalı.
 
 **YANIT FORMATI (JSON):**
 {
-  "hierarchicalCategoryIds": ["ID1", "ID2"],
-  "hierarchicalCategoryName": "Kategori İsmi",
-  "hierarchicalCategoryReason": "Neden...",
+  "hierarchicalCategoryIds": ["ID1", "ID2", "ID3"],
+  "hierarchicalCategoryName": "Kategori Adı",
+  "hierarchicalCategoryReason": "Neden bu kategori?",
   "productTypeCategoryId": "ID",
   "productTypeCategoryName": "İsim",
-  "productTypeCategoryReason": "Neden...",
-  "descriptionHtml": "<h3>Ürün Hakkında</h3><p>...</p>",
+  "productTypeCategoryReason": "Neden bu tip?",
+  "descriptionHtml": "<ul><li>...</li></ul>",
   "attributeSelections": {
-    "featureId": "valueId"
+    "featureId": "valueId",
+    "featureId2": "valueId2"
   }
 }
 
-**KRİTİK KURALLAR:**
-- Açıklama en az 150-200 kelime olsun.
-- attributeSelections key ve value STRING olmalı.`;
+**DİKKAT:** 'attributeSelections' boş dönemez. Mutlaka görselden bir şeyler çıkar.`;
 
         const completion = await openai.chat.completions.create({
             model: "gpt-4o-mini", // Supports vision
@@ -139,7 +143,7 @@ ${attributesList}
                 }
             ],
             response_format: { type: "json_object" },
-            temperature: 0.5, // Biraz daha esnek olsun
+            temperature: 0.2, // Daha kararlı, less random
             max_tokens: 4000
         });
 
