@@ -8,9 +8,32 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Arslan Panel | Ürün Yönetim Sistemi",
-  description: "Arslan Ailesine Özel Gelişmiş Ürün Yönetim Paneli",
+  description: "Arslan Ailesine Özel Gelişmiş Ürün Yönetim Paneli - Ticimax Entegrasyon ve AI Destekli Ürün Yönetimi",
   icons: {
     icon: "/favicon.png",
+    apple: "/favicon.png",
+  },
+  openGraph: {
+    title: "Arslan Panel | Ürün Yönetim Sistemi",
+    description: "Arslan Ailesine Özel Gelişmiş Ürün Yönetim Paneli",
+    url: "https://panel.arslan.com",
+    siteName: "Arslan Panel",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Arslan Panel Social Preview",
+      },
+    ],
+    locale: "tr_TR",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Arslan Panel | Ürün Yönetim Sistemi",
+    description: "Arslan Ailesine Özel Gelişmiş Ürün Yönetim Paneli",
+    images: ["/og-image.png"],
   },
 };
 
