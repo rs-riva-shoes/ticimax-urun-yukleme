@@ -5,19 +5,22 @@ import { getAuth, Auth } from "firebase-admin/auth";
 import { env } from "@/config/env";
 
 export const createMockFirestore = (): Firestore => {
+    const mockQuery = {
+        get: async () => ({ docs: [], data: () => ({ count: 0 }) }),
+        where: () => mockQuery,
+        orderBy: () => mockQuery,
+        limit: () => mockQuery,
+        count: () => ({ get: async () => ({ data: () => ({ count: 0 }) }) })
+    };
+
     return {
         collection: () => ({
-            get: async () => ({ docs: [] }),
+            ...mockQuery,
             doc: () => ({
                 get: async () => ({ exists: false, data: () => ({}) }),
                 set: async () => { },
                 update: async () => { }
             }),
-            where: () => ({ 
-                get: async () => ({ empty: true, docs: [] }),
-                count: () => ({ get: async () => ({ data: () => ({ count: 0 }) }) })
-            }),
-            count: () => ({ get: async () => ({ data: () => ({ count: 0 }) }) })
         }),
         batch: () => ({ set: () => { }, commit: async () => { } }),
         runTransaction: async () => { return "MOCK_SKU"; }
