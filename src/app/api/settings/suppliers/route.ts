@@ -1,3 +1,4 @@
+import { env } from '@/config/env';
 
 import { NextResponse } from 'next/server';
 
@@ -45,8 +46,8 @@ const extractSuppliersFromXml = (xml: string) => {
 
 export async function GET() {
     try {
-        const domain = process.env.TICIMAX_DOMAIN || "https://www.siteadi.com";
-        const userCode = process.env.TICIMAX_USER;
+        const domain = env.TICIMAX_DOMAIN;
+        const userCode = env.TICIMAX_USER;
         console.log("DEBUG: Kullanılan Ticimax UyeKodu:", userCode); // Hangi kodun gittiğini görelim
 
         if (!userCode) {
@@ -107,8 +108,8 @@ export async function POST(request: Request) {
             return NextResponse.json({ success: false, error: "Tedarikçi adı zorunlu" }, { status: 400 });
         }
 
-        const domain = process.env.TICIMAX_DOMAIN || "https://www.siteadi.com";
-        const userCode = process.env.TICIMAX_USER;
+        const domain = env.TICIMAX_DOMAIN;
+        const userCode = env.TICIMAX_USER;
 
         // SOAP Body: SaveTedarikci
         // Standart WCF Yapısı: m parametresi ve içindeki Ticimax.BL tipleri

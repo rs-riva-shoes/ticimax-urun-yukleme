@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { adminDb } from "@/lib/firebase-admin";
+import { adminDb } from "@/services/firebase-admin";
 import attributesData from "@/data/attributes-mapping.json";
 
 export async function POST() {

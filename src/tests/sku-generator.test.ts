@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { generateProfessionalSKU } from './sku-generator';
+import { generateProfessionalSKU } from '@/services/sku-generator';
 
 describe('Server-Side SKU Generator Tests', () => {
 

@@ -1,7 +1,8 @@
 import OpenAI from "openai";
+import { env } from "@/config/env";
 
 const getOpenAIClient = () => {
-    const apiKey = process.env.OPENAI_API_KEY || process.env.APP_OPENAI_API_KEY;
+    const apiKey = env.OPENAI_API_KEY;
     
     if (!apiKey) {
         if (process.env.NODE_ENV === "development") {
@@ -19,4 +20,3 @@ const getOpenAIClient = () => {
 };
 
 export const openai = getOpenAIClient() as OpenAI;
-

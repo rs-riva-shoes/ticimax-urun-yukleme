@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { sanitizeTurkish } from './utils';
+import { sanitizeTurkish } from '@/utils';
 
 interface MockVariant {
     color: string;

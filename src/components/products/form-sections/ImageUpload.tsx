@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Upload, X } from "lucide-react";
 import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils";
 
 interface ImageUploadProps {
     files: File[];

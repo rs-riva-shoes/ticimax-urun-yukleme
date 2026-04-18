@@ -3,9 +3,9 @@ import { Button } from "@/components/ui/button";
 import { X, CheckCircle2, Truck, Tag, Box, Info } from "lucide-react";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { formatPrice } from "@/lib/utils";
+import { formatPrice } from "@/utils";
 
-import { PushPayload, SelectedAttribute, EnrichedVariant } from "@/lib/types";
+import { PushPayload, SelectedAttribute, EnrichedVariant } from "@/types";
 
 interface ReviewModalProps {
     showReview: boolean;

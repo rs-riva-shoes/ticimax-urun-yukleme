@@ -2,12 +2,13 @@ import { initializeApp, getApps, getApp, cert, ServiceAccount } from "firebase-a
 import { getFirestore, Firestore } from "firebase-admin/firestore";
 import { getStorage, Storage } from "firebase-admin/storage";
 import { getAuth, Auth } from "firebase-admin/auth";
+import { env } from "@/config/env";
 
 const serviceAccount: ServiceAccount = {
-    projectId: process.env.FIREBASE_PROJECT_ID,
-    clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+    projectId: env.FIREBASE_PROJECT_ID,
+    clientEmail: env.FIREBASE_CLIENT_EMAIL,
     // Handle private key newlines
-    privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, "\n"),
+    privateKey: env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, "\n"),
 };
 
 let app;
@@ -20,7 +21,7 @@ try {
         app = !getApps().length
             ? initializeApp({
                 credential: cert(serviceAccount),
-                storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET, // Optional: for admin storage access
+                storageBucket: env.FIREBASE_STORAGE_BUCKET, // Optional: for admin storage access
             })
             : getApp();
 

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { adminStorage } from "@/lib/firebase-admin";
+import { adminStorage } from "@/services/firebase-admin";
+import { env } from "@/config/env";
 
 export async function POST(req: Request) {
     try {
@@ -41,8 +42,8 @@ export async function POST(req: Request) {
         const filename = `${folder}/${Date.now()}-${Math.random().toString(36).substring(7)}.${extension}`;
 
 
-        const bucketName = process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET;
-        const projectId = process.env.FIREBASE_PROJECT_ID || process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
+        const bucketName = env.FIREBASE_STORAGE_BUCKET;
+        const projectId = env.FIREBASE_PROJECT_ID;
 
         console.log(`[Upload] Configured Bucket: ${bucketName}`);
         console.log(`[Upload] Project ID: ${projectId}`);

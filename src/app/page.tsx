@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { adminDb } from "@/lib/firebase-admin";
-import { SyncDataButtons } from "@/components/settings/sync-data-buttons";
-import type { Product } from "@/lib/types";
+import { adminDb } from "@/services/firebase-admin";
+import { SyncDataButtons } from "@/components/settings/SyncDataButtons";
+import type { Product } from "@/types";
 import {
   PackageOpen,
   Clock,
@@ -106,7 +106,7 @@ export default async function Dashboard() {
           <p className="text-3xl font-extrabold text-stone-900">
             {latestProducts[0]?.createdAt
               ? new Date(
-                ( (latestProducts[0].createdAt as import('@/lib/types').FirestoreTimestamp)._seconds || (latestProducts[0].createdAt as import('@/lib/types').FirestoreTimestamp).seconds || 0) * 1000
+                ( (latestProducts[0].createdAt as import('@/types').FirestoreTimestamp)._seconds || (latestProducts[0].createdAt as import('@/types').FirestoreTimestamp).seconds || 0) * 1000
               ).toLocaleDateString("tr-TR", { day: "numeric", month: "short" })
               : "-"}
           </p>

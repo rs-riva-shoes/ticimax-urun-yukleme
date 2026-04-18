@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Edit, Trash2, ChevronDown, Package, Plus, X, UploadCloud, PlusCircle } from "lucide-react";
-import { sanitizeTurkish } from "@/lib/utils";
+import { sanitizeTurkish } from "@/utils";
 import Image from "next/image";
 
 

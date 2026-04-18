@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { validatePushPayload } from './utils';
-import type { PushPayload } from './types';
+import { validatePushPayload } from '@/utils';
+import type { PushPayload } from '@/types';
 
 
 describe('Ticimax Payload Validation Tests', () => {

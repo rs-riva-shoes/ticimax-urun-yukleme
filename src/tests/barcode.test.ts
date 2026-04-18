@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { sanitizeTurkish } from './utils';
+import { sanitizeTurkish } from '@/utils';
 
 // Isolated barcode logic from VariantManager
 function generateBarcode(code: string, color: string, size: string) {

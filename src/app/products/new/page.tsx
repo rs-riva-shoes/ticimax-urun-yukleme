@@ -1,5 +1,5 @@
-import { ProductForm } from "@/components/products/product-form";
-import { adminDb } from "@/lib/firebase-admin";
+import { ProductForm } from "@/components/products/ProductForm";
+import { adminDb } from "@/services/firebase-admin";
 
 // Force dynamic since we fetch data
 export const dynamic = "force-dynamic";

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { openai } from "@/lib/openai";
+import { openai } from "@/services/openai";
 import hierarchicalCategories from "@/data/hierarchical-categories.json";
 import productTypeCategories from "@/data/product-type-categories.json";
 

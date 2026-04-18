@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { sanitizeTurkishAlphaOnly } from './utils';
+import { sanitizeTurkishAlphaOnly } from '@/utils';
 
 // Logic from ProductInfo.tsx standardized
 function generateSKU(brand: string, category: string, gender: string, totalCount: number) {

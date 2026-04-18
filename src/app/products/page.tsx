@@ -1,8 +1,8 @@
-import { adminDb } from "@/lib/firebase-admin";
+import { adminDb } from "@/services/firebase-admin";
 import Link from "next/link";
 import { Plus, Package, ArrowLeft } from "lucide-react";
 import { ProductCard } from "@/components/products/ProductCard";
-import type { Product } from "@/lib/types";
+import type { Product } from "@/types";
 
 export const revalidate = 30; // 30 saniye önbellekleme
 

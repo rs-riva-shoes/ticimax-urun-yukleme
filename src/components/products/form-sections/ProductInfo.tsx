@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sparkles, Wand2, RefreshCw } from "lucide-react";
-import { cn, sanitizeTurkishAlphaOnly } from "@/lib/utils";
+import { cn, sanitizeTurkishAlphaOnly } from "@/utils";
 
 interface ProductInfoProps {
     title: string;

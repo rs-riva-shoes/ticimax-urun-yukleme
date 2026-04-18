@@ -1,6 +1,6 @@
 import { Sparkles } from "lucide-react";
 import hierarchicalCategories from "@/data/hierarchical-categories.json";
-import type { Brand, Supplier } from "@/lib/types";
+import type { Brand, Supplier } from "@/types";
 import { useEffect, useState } from "react";
 
 interface CategorySelectorProps {

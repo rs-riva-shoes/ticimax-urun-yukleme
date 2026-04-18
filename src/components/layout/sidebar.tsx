@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
-import { LionIcon } from "@/components/icons/lion";
+import { cn } from "@/utils";
+import { LionIcon } from "@/components/icons/Lion";
 import {
   LayoutDashboard,
   Package,

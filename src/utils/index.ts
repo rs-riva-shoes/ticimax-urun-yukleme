@@ -1,6 +1,6 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-import type { PushPayload, ValidationResult } from "./types";
+import type { PushPayload, ValidationResult } from "@/types";
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));

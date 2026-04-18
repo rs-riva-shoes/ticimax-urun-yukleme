@@ -1,6 +1,7 @@
 
 import { NextResponse } from 'next/server';
-import { PushPayload, EnrichedVariant } from '@/lib/types';
+import { env } from '@/config/env';
+import { PushPayload, EnrichedVariant } from '@/types';
 
 const escapeXml = (unsafe: string | number | undefined) => {
     if (unsafe === undefined || unsafe === null) return '';
@@ -20,9 +21,9 @@ const getCurrencyId = (currencyCode: string): number => {
 export async function POST(request: Request) {
     try {
         const payload: PushPayload = await request.json();
-        const domain = process.env.TICIMAX_DOMAIN || "";
-        const userCode = process.env.TICIMAX_USER;
-        const password = process.env.TICIMAX_PASS;
+        const domain = env.TICIMAX_DOMAIN;
+        const userCode = env.TICIMAX_USER;
+        const password = env.TICIMAX_PASS;
 
         if (!userCode || !password) {
             return NextResponse.json({ success: false, error: "Kimlik bilgileri eksik." }, { status: 500 });

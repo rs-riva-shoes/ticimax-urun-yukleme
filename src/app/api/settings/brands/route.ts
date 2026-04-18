@@ -1,3 +1,4 @@
+import { env } from '@/config/env';
 
 import { NextResponse } from 'next/server';
 
@@ -17,8 +18,8 @@ function escapeXml(unsafe: string): string {
 // GET: Marka Listesini Çek (SelectMarka)
 export async function GET() {
     try {
-        const domain = process.env.TICIMAX_DOMAIN || "https://www.siteadi.com";
-        const userCode = process.env.TICIMAX_USER;
+        const domain = env.TICIMAX_DOMAIN;
+        const userCode = env.TICIMAX_USER;
 
         if (!userCode) {
             return NextResponse.json({ success: false, error: "API Ayarları eksik" }, { status: 500 });
@@ -100,8 +101,8 @@ export async function POST(request: Request) {
             return NextResponse.json({ success: false, error: "Marka adı zorunlu" }, { status: 400 });
         }
 
-        const domain = process.env.TICIMAX_DOMAIN || "https://www.siteadi.com";
-        const userCode = process.env.TICIMAX_USER;
+        const domain = env.TICIMAX_DOMAIN;
+        const userCode = env.TICIMAX_USER;
 
         // SOAP Body: SaveMarka
         // Tedarikçide kazandığımız tecrübeyle:

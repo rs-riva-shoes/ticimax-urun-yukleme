@@ -3,8 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Plus, Trash2, Wand2, Sparkles, Image as ImageIcon } from "lucide-react";
-import { sanitizeTurkish } from "@/lib/utils";
-import type { ProductVariant, ColorSetting } from "@/lib/types";
+import { sanitizeTurkish } from "@/utils";
+import type { ProductVariant, ColorSetting } from "@/types";
 
 export type { ColorSetting };
 

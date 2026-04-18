@@ -1,10 +1,11 @@
+import { env } from '@/config/env';
 import { NextResponse } from 'next/server';
-import { adminDb } from '@/lib/firebase-admin';
+import { adminDb } from '@/services/firebase-admin';
 
 
 // Start SOAP Request Helper
 async function fetchTicimax(action: string, soapBody: string) {
-    const domain = process.env.TICIMAX_DOMAIN || "https://www.siteadi.com";
+    const domain = env.TICIMAX_DOMAIN;
     const apiUrl = `${domain.replace(/\/$/, '')}/Servis/UrunServis.svc`;
 
     const response = await fetch(apiUrl, {
@@ -22,7 +23,7 @@ async function fetchTicimax(action: string, soapBody: string) {
 
 export async function POST() {
     try {
-        const userCode = process.env.TICIMAX_USER;
+        const userCode = env.TICIMAX_USER;
         if (!userCode) {
             return NextResponse.json({ success: false, error: "API credentials missing" }, { status: 500 });
         }

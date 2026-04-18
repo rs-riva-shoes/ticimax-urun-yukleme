@@ -1,5 +1,6 @@
+import { env } from '@/config/env';
 import { NextResponse } from 'next/server';
-import { adminDb } from '@/lib/firebase-admin';
+import { adminDb } from '@/services/firebase-admin';
 
 function slugToTitle(url: string) {
     if (!url) return "";
@@ -79,9 +80,9 @@ async function ticimaxSoapCall(domain: string, action: string, body: string) {
 
 export async function POST() {
     try {
-        const domain = process.env.TICIMAX_DOMAIN || "https://www.siteadi.com";
-        const userCode = process.env.TICIMAX_USER;
-        const password = process.env.TICIMAX_PASS;
+        const domain = env.TICIMAX_DOMAIN;
+        const userCode = env.TICIMAX_USER;
+        const password = env.TICIMAX_PASS;
 
         if (!userCode || !password) {
             return NextResponse.json({ success: false, error: "API Ayarları eksik" }, { status: 500 });

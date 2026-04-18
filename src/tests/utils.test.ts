@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { sanitizeTurkish, sanitizeTurkishAlphaOnly, formatPrice } from './utils';
+import { sanitizeTurkish, sanitizeTurkishAlphaOnly, formatPrice } from '@/utils';
 
 describe('Utility Functions (JUnit Style Tests)', () => {
     

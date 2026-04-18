@@ -3,8 +3,8 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Wand2, Eye } from "lucide-react";
-import { validatePushPayload } from "@/lib/utils";
-import type { Attribute, Brand, Supplier, ColorSetting, ProductVariant } from "@/lib/types";
+import { validatePushPayload } from "@/utils";
+import type { Attribute, Brand, Supplier, ColorSetting, ProductVariant } from "@/types";
 
 // Sub-components
 import { ImageUpload } from "./form-sections/ImageUpload";
@@ -30,7 +30,7 @@ export function ProductForm({ attributes, brands: initialBrands, suppliers: init
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [productCode, setProductCode] = useState("");
-    const [, setValidationErrors] = useState<string[]>([]);
+
 
     // AI States
     const [aiLoading, setAiLoading] = useState(false);
@@ -476,12 +476,12 @@ export function ProductForm({ attributes, brands: initialBrands, suppliers: init
 
             const validation = validatePushPayload(payload);
             if (!validation.isValid) {
-                setValidationErrors(validation.errors.map(e => e.message));
+
                 setPushStatus("error");
                 alert("Eksik alanlar:\n" + validation.errors.map(e => `• ${e.message}`).join("\n"));
                 return;
             }
-            setValidationErrors([]);
+
 
             console.log("[Client] Payload hazır. API isteği atılıyor...");
 
