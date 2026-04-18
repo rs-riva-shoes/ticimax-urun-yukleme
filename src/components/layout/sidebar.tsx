@@ -30,7 +30,7 @@ export function Sidebar() {
     <aside className="sidebar w-[240px] fixed inset-y-0 left-0 flex flex-col z-50 bg-stone-950">
       {/* Brand */}
       <div className="p-5 flex items-center gap-3 border-b border-white/5">
-        <LionIcon size={40} className="rounded-full" />
+        <LionIcon size={40} className="" />
         <div>
           <h2 className="text-white font-extrabold text-lg tracking-tight leading-none">
             ARSLAN

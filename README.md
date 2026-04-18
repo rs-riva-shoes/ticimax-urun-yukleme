@@ -9,6 +9,15 @@
 
 ---
 
+## 📸 Ekran Görüntüleri
+
+<p align="center">
+  <img src="public/screenshots/dashboard.png" width="45%" alt="Dashboard" />
+  <img src="public/screenshots/products.png" width="45%" alt="Ürün Yönetimi" />
+</p>
+
+---
+
 ## ✨ Öne Çıkan Özellikler
 
 - 🤖 **AI Destekli İçerik:** OpenAI entegrasyonu ile otomatik ürün açıklamaları ve SEO optimizasyonu.
@@ -17,7 +26,18 @@
 - 🏷️ **Akıllı SKU ve Barkod:** Özelleştirilebilir kurallarla dinamik SKU ve barkod oluşturma sistemi.
 - 🧹 **Hızlı Temizlik:** Tek tıkla ürün silme (Wipe) ve veritabanı optimizasyonu.
 - 📂 **Kategori Yönetimi:** Ticimax kategorileri ile yerel veritabanı arasında akıllı eşleştirme.
-- 🎨 **Modern Arayüz:** Tailwind CSS 4 ve Framer Motion ile güçlendirilmiş, akıcı ve premium kullanıcı deneyimi.
+- 🎨 **Modern Arayüz:** Tailwind CSS 4 and Framer Motion ile güçlendirilmiş, akıcı ve premium kullanıcı deneyimi.
+
+---
+
+## 🗺️ Yol Haritası
+
+- [x] Firebase Entegrasyonu (Auth & Firestore)
+- [x] OpenAI ile İçerik Oluşturma
+- [x] Gelişmiş Kategori Eşleştirme Sistemi
+- [ ] Toplu Ürün Yükleme (CSV/Excel)
+- [ ] Tedarikçi Bazlı Kural Motoru
+- [ ] Mobil Uygulama Desteği
 
 ---
 
@@ -86,6 +106,14 @@ Birim testlerini çalıştırmak için:
 ```bash
 npm run test
 ```
+
+---
+
+## 🔒 Güvenlik Notları
+
+- **Hassas Anahtarlar:** API anahtarları gibi hassas veriler asla `NEXT_PUBLIC_` ön ekiyle dışarıya (client-side) servis edilmemelidir.
+- **Sunucu Tarafı Yönetim:** Admin yetkileri ve kritik işlemler yalnızca sunucu tarafında (Server Components & API Routes) yürütülür.
+- **Üretim Ortamı:** Canlı ortam sırları (secrets) Vercel veya ilgili hosting platformu üzerinden güvenli bir şekilde yapılandırılmalıdır.
 
 ---
 

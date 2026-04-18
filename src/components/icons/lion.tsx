@@ -4,7 +4,7 @@ import Image from "next/image"
 export function LionIcon({ className, size = 64 }: { className?: string; size?: number }) {
     return (
         <Image
-            src="/arslan-logo.png"
+            src="/logo.svg"
             alt="Arslan Panel Logo"
             width={size}
             height={size}
