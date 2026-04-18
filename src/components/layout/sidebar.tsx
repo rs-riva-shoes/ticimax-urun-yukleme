@@ -95,12 +95,16 @@ export function Sidebar() {
       {/* Footer */}
       <div className="p-4 border-t border-white/5">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center text-white font-bold text-xs">
-            A
+          <div className="w-9 h-9 rounded-full ring-2 ring-amber-500/20 overflow-hidden relative">
+            <img 
+              src="/arslan-avatar.png" 
+              alt="Arslan Avatar" 
+              className="w-full h-full object-cover"
+            />
           </div>
           <div>
-            <p className="text-xs text-stone-300 font-medium">Arslan</p>
-            <p className="text-[10px] text-stone-600">Yönetici</p>
+            <p className="text-sm text-stone-300 font-semibold tracking-tight">Arslan</p>
+            <p className="text-[10px] text-stone-500 font-medium">Sistem Yöneticisi</p>
           </div>
         </div>
       </div>
