@@ -2,22 +2,24 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Loader2, RefreshCw, Box, User, Briefcase, Package } from "lucide-react";
+import { Loader2, RefreshCw, Box, User, Briefcase, Package, Layers, Trash2 } from "lucide-react";
 
-type SyncType = "attributes" | "brands" | "suppliers" | "products";
+type SyncType = "attributes" | "brands" | "suppliers" | "products" | "categories" | "wipe";
 
 interface SyncButtonProps {
     type: SyncType;
     label: string;
-    icon: any;
+    icon: React.ElementType;
     apiPath: string;
 }
 
 const syncOptions: SyncButtonProps[] = [
     { type: "attributes", label: "Teknik Detay", icon: Box, apiPath: "/api/settings/attributes/sync" },
     { type: "brands", label: "Marka", icon: User, apiPath: "/api/settings/brands/sync" },
+    { type: "categories", label: "Kategori", icon: Layers, apiPath: "/api/settings/categories/sync" },
     { type: "suppliers", label: "Tedarikçi", icon: Briefcase, apiPath: "/api/settings/suppliers/sync" },
-    { type: "products", label: "Ürünler", icon: Package, apiPath: "/api/settings/products/sync" }
+    { type: "products", label: "Ürünler", icon: Package, apiPath: "/api/settings/products/sync" },
+    { type: "wipe", label: "Tümünü Sil", icon: Trash2, apiPath: "/api/settings/products/wipe" }
 ];
 
 export function SyncDataButtons() {
@@ -39,7 +41,7 @@ export function SyncDataButtons() {
             } else {
                 setMessage(`❌ Hata: ${data.error}`);
             }
-        } catch (error) {
+        } catch {
             setMessage("❌ Bağlantı hatası");
         } finally {
             setLoadingType(null);

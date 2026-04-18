@@ -1,20 +1,6 @@
 import { NextResponse } from 'next/server';
 import { adminDb } from '@/lib/firebase-admin';
-import path from 'path';
 
-// Helper: XML Special Chars Escape
-const escapeXml = (unsafe: string) => {
-    return unsafe.replace(/[<>&'"]/g, function (c) {
-        switch (c) {
-            case '<': return '&lt;';
-            case '>': return '&gt;';
-            case '&': return '&amp;';
-            case '\'': return '&apos;';
-            case '"': return '&quot;';
-            default: return c;
-        }
-    });
-};
 
 // Start SOAP Request Helper
 async function fetchTicimax(action: string, soapBody: string) {
@@ -33,31 +19,6 @@ async function fetchTicimax(action: string, soapBody: string) {
     return await response.text();
 }
 
-// Helper: Extract Items from XML using Regex
-function extractItems(xml: string, tagName: string): any[] {
-    const items: any[] = [];
-    // Clean Namespaces
-    const cleanXml = xml.replace(/<[a-zA-Z0-9_]+:/g, '<').replace(/<\/[a-zA-Z0-9_]+:/g, '</');
-
-    const regex = new RegExp(`<${tagName}>([\\s\\S]*?)<\\/${tagName}>`, 'g');
-    let match;
-
-    while ((match = regex.exec(cleanXml)) !== null) {
-        const block = match[1];
-        const idMatch = block.match(/<ID>(\d+)<\/ID>/);
-        const nameMatch = block.match(/<Tanim>(.*?)<\/Tanim>/);
-        const featureIdMatch = block.match(/<OzellikID>(\d+)<\/OzellikID>/); // For Values
-
-        if (idMatch && nameMatch) {
-            items.push({
-                id: idMatch[1],
-                name: nameMatch[1],
-                featureId: featureIdMatch ? featureIdMatch[1] : null
-            });
-        }
-    }
-    return items;
-}
 
 export async function POST() {
     try {
@@ -84,7 +45,7 @@ export async function POST() {
         const featuresXml = await fetchTicimax('SelectTeknikDetayOzellik', featuresBody);
 
         // Custom extract for Features to get GrupID
-        const features: any[] = [];
+        const features: Record<string, unknown>[] = [];
         const cleanFeaturesXml = featuresXml.replace(/<[a-zA-Z0-9_]+:/g, '<').replace(/<\/[a-zA-Z0-9_]+:/g, '</');
         const featureRegex = /<TeknikDetayOzellik>([\s\S]*?)<\/TeknikDetayOzellik>/g;
         let featMatch;
@@ -119,7 +80,7 @@ export async function POST() {
         console.log("Fetching Values...");
         const valuesXml = await fetchTicimax('SelectTeknikDetayDeger', valuesBody);
 
-        const values: any[] = [];
+        const values: Record<string, unknown>[] = [];
         const cleanValuesXml = valuesXml.replace(/<[a-zA-Z0-9_]+:/g, '<').replace(/<\/[a-zA-Z0-9_]+:/g, '</');
         const valRegex = /<TeknikDetayDeger>([\s\S]*?)<\/TeknikDetayDeger>/g;
         let valMatch;

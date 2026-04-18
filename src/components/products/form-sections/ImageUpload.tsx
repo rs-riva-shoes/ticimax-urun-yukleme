@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useMemo, useEffect, useRef } from "react";
 import { useDropzone } from "react-dropzone";
 import { motion, AnimatePresence } from "framer-motion";
 import { Upload, X } from "lucide-react";
@@ -21,11 +21,29 @@ export function ImageUpload({ files, setFiles }: ImageUploadProps) {
         accept: {
             "image/*": [".jpeg", ".jpg", ".png", ".webp"],
         },
+        maxSize: 10 * 1024 * 1024, // 10MB max per file
     });
 
     const removeFile = (index: number) => {
         setFiles((prev) => prev.filter((_, i) => i !== index));
     };
+
+    // Create and manage preview URLs to prevent memory leaks
+    const previewUrls = useMemo(() => {
+        return files.map((file) => URL.createObjectURL(file));
+    }, [files]);
+
+    // Cleanup blob URLs when files change or component unmounts
+    const prevUrlsRef = useRef<string[]>([]);
+    useEffect(() => {
+        // Revoke previous URLs
+        prevUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
+        prevUrlsRef.current = previewUrls;
+
+        return () => {
+            previewUrls.forEach((url) => URL.revokeObjectURL(url));
+        };
+    }, [previewUrls]);
 
     return (
         <Card className="border-dashed border-2 border-primary/20 bg-background/50">
@@ -46,6 +64,7 @@ export function ImageUpload({ files, setFiles }: ImageUploadProps) {
                     <p className="text-lg font-medium">
                         {isDragActive ? "Dosyaları buraya bırakın" : "Fotoğrafları sürükleyip bırakın"}
                     </p>
+                    <p className="text-xs text-muted-foreground mt-1">Maks. 10MB · JPG, PNG, WebP</p>
                 </div>
 
                 {/* Image Preview Grid */}
@@ -54,15 +73,15 @@ export function ImageUpload({ files, setFiles }: ImageUploadProps) {
                         <div className="grid grid-cols-5 gap-3 mt-6">
                             {files.map((file, i) => (
                                 <motion.div
-                                    key={i}
+                                    key={`${file.name}-${file.size}-${i}`}
                                     initial={{ opacity: 0, scale: 0.8 }}
                                     animate={{ opacity: 1, scale: 1 }}
                                     exit={{ opacity: 0, scale: 0.8 }}
                                     className="relative aspect-[3/4] group rounded-lg overflow-hidden border bg-background"
                                 >
                                     <Image
-                                        src={URL.createObjectURL(file)}
-                                        alt="preview"
+                                        src={previewUrls[i]}
+                                        alt={`Önizleme ${i + 1}`}
                                         fill
                                         unoptimized
                                         className="object-cover"
@@ -76,6 +95,11 @@ export function ImageUpload({ files, setFiles }: ImageUploadProps) {
                                     >
                                         <X className="w-3 h-3" />
                                     </button>
+                                    {i === 0 && (
+                                        <div className="absolute bottom-1 left-1 bg-amber-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded">
+                                            Kapak
+                                        </div>
+                                    )}
                                 </motion.div>
                             ))}
                         </div>
@@ -85,3 +109,4 @@ export function ImageUpload({ files, setFiles }: ImageUploadProps) {
         </Card>
     );
 }
+

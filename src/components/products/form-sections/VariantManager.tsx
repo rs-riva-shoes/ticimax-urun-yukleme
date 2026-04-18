@@ -1,27 +1,17 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Plus, Trash2, Wand2, Sparkles, Image as ImageIcon } from "lucide-react";
+import { sanitizeTurkish } from "@/lib/utils";
+import type { ProductVariant, ColorSetting } from "@/lib/types";
 
-interface Variant {
-    size: string;
-    color: string;
-    qty: number;
-    sku?: string;
-    barcode?: string;
-}
-
-export interface ColorSetting {
-    imageIndices: number[]; // Array of selected image indices
-    title: string;
-}
+export type { ColorSetting };
 
 interface VariantManagerProps {
-    variants: Variant[];
-    setVariants: (variants: Variant[]) => void;
+    variants: ProductVariant[];
+    setVariants: (variants: ProductVariant[]) => void;
     productCode: string;
-    selectedCategoryId: string;
     categoryName: string;
     files: File[];
     colorSettings: Record<string, ColorSetting>;
@@ -33,14 +23,12 @@ export function VariantManager({
     variants,
     setVariants,
     productCode,
-    selectedCategoryId,
     categoryName,
     files,
     colorSettings,
     setColorSettings,
     productTitle
 }: VariantManagerProps) {
-    const [isGeneratingBulkSKU, setIsGeneratingBulkSKU] = useState(false);
     const [isDoubleSize, setIsDoubleSize] = useState(false); // Çift numara (36-37) modu
 
     // Bulk variant generation state
@@ -53,6 +41,25 @@ export function VariantManager({
         const colors = new Set(variants.map(v => v.color).filter(c => c));
         return Array.from(colors);
     }, [variants]);
+
+    // Create and manage preview URLs for image selection thumbnails
+    const previewUrlsMap = useMemo(() => {
+        const map = new Map<number, string>();
+        files.forEach((file, idx) => {
+            map.set(idx, URL.createObjectURL(file));
+        });
+        return map;
+    }, [files]);
+
+    // Cleanup blob URLs when files change
+    const prevVmUrlsRef = useRef<Map<number, string>>(new Map());
+    useEffect(() => {
+        prevVmUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
+        prevVmUrlsRef.current = previewUrlsMap;
+        return () => {
+            previewUrlsMap.forEach((url) => URL.revokeObjectURL(url));
+        };
+    }, [previewUrlsMap]);
 
     // Initialize/Update settings for new colors and sync titles
     useEffect(() => {
@@ -83,9 +90,9 @@ export function VariantManager({
         if (hasChanges) {
             setColorSettings(newSettings);
         }
-    }, [uniqueColors, categoryName, productTitle]); // Added productTitle dependency
+    }, [uniqueColors, categoryName, productTitle, colorSettings, setColorSettings]);
 
-    const updateColorSetting = (color: string, field: keyof ColorSetting, value: any) => {
+    const updateColorSetting = (color: string, field: keyof ColorSetting, value: number[] | string) => {
         setColorSettings({
             ...colorSettings,
             [color]: {
@@ -108,11 +115,7 @@ export function VariantManager({
 
     const generateBarcode = (code: string, color: string, size: string) => {
         if (!code || !color || !size) return "";
-        const cleanText = (text: string) => text.toUpperCase()
-            .replace(/İ/g, "I").replace(/Ğ/g, "G").replace(/Ü/g, "U").replace(/Ş/g, "S").replace(/Ö/g, "O").replace(/Ç/g, "C")
-            .replace(/[^A-Z0-9-]/g, "");
-
-        return `${cleanText(code)}-${cleanText(color)}-${cleanText(size)}`;
+        return `${sanitizeTurkish(code)}-${sanitizeTurkish(color)}-${sanitizeTurkish(size)}`;
     };
 
     // ... (existing actions: addVariant, removeVariant, updateVariant, generateBulkVariants)
@@ -123,14 +126,13 @@ export function VariantManager({
 
     const removeVariant = (index: number) => setVariants(variants.filter((_, i) => i !== index));
 
-    const updateVariant = (index: number, field: keyof Variant, value: string | number) => {
+    const updateVariant = (index: number, field: keyof ProductVariant, value: string | number) => {
         const newVariants = [...variants];
 
         if (field === "qty") {
             newVariants[index].qty = Number(value);
         } else {
-            // @ts-ignore
-            newVariants[index][field] = String(value);
+            (newVariants[index] as unknown as Record<string, unknown>)[field] = String(value);
         }
 
         if (field === "size" || field === "color") {
@@ -157,7 +159,7 @@ export function VariantManager({
                 setVariants(updatedVariants);
             }
         }
-    }, [productCode]);
+    }, [productCode, variants, setVariants]);
 
     const generateBulkVariants = () => {
         if (!bulkSizeStart || !bulkSizeEnd || !bulkColors) {
@@ -185,7 +187,7 @@ export function VariantManager({
             return;
         }
 
-        const newVariants: Variant[] = [];
+        const newVariants: ProductVariant[] = [];
 
         for (const color of colorList) {
             // Çift numara mantığı: 36-37, 38-39 gibi ikişer atlayarak gider
@@ -385,6 +387,8 @@ export function VariantManager({
                                                 <div className="flex gap-2 overflow-x-auto pb-2">
                                                     {files.map((file, idx) => {
                                                         const isSelected = colorSettings[color]?.imageIndices?.includes(idx);
+                                                        // Use stable preview URL
+                                                        const previewUrl = previewUrlsMap.get(idx) || "";
                                                         return (
                                                             <div
                                                                 key={idx}
@@ -394,8 +398,9 @@ export function VariantManager({
                                                                     ${isSelected ? "border-blue-500 ring-2 ring-blue-200 opacity-100 scale-105" : "border-transparent opacity-60 hover:opacity-100"}
                                                                 `}
                                                             >
+                                                                {/* eslint-disable-next-line @next/next/no-img-element */}
                                                                 <img
-                                                                    src={URL.createObjectURL(file)}
+                                                                    src={previewUrl}
                                                                     alt={`img-${idx}`}
                                                                     className="w-full h-full object-cover"
                                                                 />

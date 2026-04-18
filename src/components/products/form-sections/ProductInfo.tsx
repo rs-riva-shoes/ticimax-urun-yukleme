@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sparkles, Wand2, RefreshCw } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, sanitizeTurkishAlphaOnly } from "@/lib/utils";
 
 interface ProductInfoProps {
     title: string;
@@ -12,7 +12,7 @@ interface ProductInfoProps {
     setProductCode: (value: string) => void;
     brandName?: string;
     categoryName?: string;
-    gender?: string; // Hierarchical category usually implies gender/segment
+    gender?: string;
     handleAiFill: () => void;
     aiLoading: boolean;
     nameSuggesting: boolean;
@@ -42,22 +42,16 @@ export function ProductInfo({
             return;
         }
 
-        // Yardımcı fonksiyon: Metni temizle, boşlukları sil, büyük harf yap, Türkçe karakterleri düzelt
-        const clean = (text: string) => text?.toUpperCase()
-            .replace(/İ/g, "I").replace(/Ğ/g, "G").replace(/Ü/g, "U").replace(/Ş/g, "S").replace(/Ö/g, "O").replace(/Ç/g, "C")
-            .replace(/[^A-Z0-9]/g, "") // Sadece harf ve rakam
-            .substring(0, 3);
+        const brandCode = sanitizeTurkishAlphaOnly(brandName, 3);
+        const catCode = sanitizeTurkishAlphaOnly(categoryName, 3);
 
-        const brandCode = clean(brandName);
-        const catCode = clean(categoryName);
-
-        // Cinsiyet kodlaması (KADIN -> K, ERKEK -> E, ÇOCUK -> C gibi)
+        // Cinsiyet kodlaması
         let genderCode = "U"; // Unisex
         if (gender?.toUpperCase().includes("KADIN")) genderCode = "K";
         else if (gender?.toUpperCase().includes("ERKEK")) genderCode = "E";
         else if (gender?.toUpperCase().includes("COCUK") || gender?.toUpperCase().includes("BEBEK")) genderCode = "C";
 
-        const randomNum = Math.floor(1000 + Math.random() * 9000); // 4 haneli sayı
+        const randomNum = Math.floor(1000 + Math.random() * 9000);
 
         // Format: MARKA-KAT-C-1234
         setProductCode(`${brandCode}-${catCode}-${genderCode}-${randomNum}`);
@@ -128,7 +122,7 @@ export function ProductInfo({
                     </Button>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                    Bu kod tüm varyantlarda ortak "Stok Kodu" olarak kullanılacak. Barkodlar ise buna göre türetilecek (Örn: {productCode || "KOD"}-S-KHV).
+                    Bu kod tüm varyantlarda ortak &quot;Stok Kodu&quot; olarak kullanılacak. Barkodlar ise buna göre türetilecek (Örn: {productCode || "KOD"}-S-KHV).
                 </p>
             </div>
 

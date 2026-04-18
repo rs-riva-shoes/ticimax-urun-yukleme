@@ -1,13 +1,16 @@
+import { useMemo, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { X, CheckCircle2, Truck, Tag, Box, Info } from "lucide-react";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { formatPrice } from "@/lib/utils";
+
+import { PushPayload, SelectedAttribute, EnrichedVariant } from "@/lib/types";
 
 interface ReviewModalProps {
     showReview: boolean;
     setShowReview: (show: boolean) => void;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    payload: any;
+    payload: PushPayload;
     files?: File[];
     handlePush: () => void;
     pushStatus: "idle" | "pushing" | "success" | "error";
@@ -21,15 +24,21 @@ export function ReviewModal({
     handlePush,
     pushStatus
 }: ReviewModalProps) {
+    // Create preview URL for the first image if available (with cleanup)
+    const coverImage = useMemo(() => {
+        return files.length > 0 ? URL.createObjectURL(files[0]) : null;
+    }, [files]);
+
+    const prevCoverRef = useRef<string | null>(null);
+    useEffect(() => {
+        if (prevCoverRef.current) URL.revokeObjectURL(prevCoverRef.current);
+        prevCoverRef.current = coverImage;
+        return () => {
+            if (coverImage) URL.revokeObjectURL(coverImage);
+        };
+    }, [coverImage]);
+
     if (!showReview) return null;
-
-    // Helper for formatting currency
-    const formatPrice = (price: number) => {
-        return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(price);
-    };
-
-    // Create preview URL for the first image if available
-    const coverImage = files.length > 0 ? URL.createObjectURL(files[0]) : null;
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
@@ -133,8 +142,7 @@ export function ReviewModal({
                                 </h3>
                                 <div className="flex flex-wrap gap-2">
                                     {payload.selectedAttributes && payload.selectedAttributes.length > 0 ? (
-                                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                                        payload.selectedAttributes.map((attr: any, i: number) => (
+                                        payload.selectedAttributes.map((attr: SelectedAttribute, i: number) => (
                                             <span key={i} className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80">
                                                 <span className="font-bold mr-1">{attr.name}:</span> {attr.valueName}
                                             </span>
@@ -194,8 +202,7 @@ export function ReviewModal({
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-border">
-                                        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                                        {payload.variants.map((v: any, i: number) => (
+                                        {payload.variants.map((v: EnrichedVariant, i: number) => (
                                             <tr key={i} className="hover:bg-muted/10">
                                                 <td className="px-4 py-2 font-medium">{v.size}</td>
                                                 <td className="px-4 py-2">{v.color}</td>
@@ -218,7 +225,7 @@ export function ReviewModal({
 
                 <div className="p-4 border-t flex justify-between items-center bg-muted/20">
                     <span className="text-xs text-muted-foreground">
-                        *Onayladığınızda ürün Ticimax'a gönderilecek ve veritabanına kaydedilecektir.
+                        *Onayladığınızda ürün Ticimax&apos;a gönderilecek ve veritabanına kaydedilecektir.
                     </span>
                     <div className="flex gap-3">
                         <Button variant="outline" onClick={() => setShowReview(false)}>Düzenle</Button>

@@ -2,6 +2,7 @@ import { adminDb } from "@/lib/firebase-admin";
 import Link from "next/link";
 import { Plus, Package, ArrowLeft } from "lucide-react";
 import { ProductCard } from "@/components/products/ProductCard";
+import type { Product } from "@/lib/types";
 
 export const revalidate = 0;
 
@@ -11,9 +12,9 @@ export default async function ProductsPage() {
         .orderBy("createdAt", "desc")
         .get();
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     const products = snapshot.docs.map(
-        (doc) => ({ id: doc.id, ...doc.data() }) as any
+        (doc) => ({ id: doc.id, ...(doc.data() as Omit<Product, 'id'>) } as Product)
     );
 
     return (
@@ -34,11 +35,9 @@ export default async function ProductsPage() {
                         </p>
                     </div>
                 </div>
-                <Link href="/products/new">
-                    <button className="btn-arslan flex items-center gap-2 text-sm">
-                        <Plus className="w-4 h-4" />
-                        Yeni Ürün
-                    </button>
+                <Link href="/products/new" className="btn-arslan flex items-center gap-2 text-sm">
+                    <Plus className="w-4 h-4" />
+                    Yeni Ürün
                 </Link>
             </div>
 
@@ -52,13 +51,13 @@ export default async function ProductsPage() {
                     <p className="text-stone-500 mt-2 mb-6">
                         İlk ürününüzü ekleyerek başlayın.
                     </p>
-                    <Link href="/products/new">
-                        <button className="btn-arslan text-sm">Ürün Ekle</button>
+                    <Link href="/products/new" className="btn-arslan text-sm inline-block">
+                        Ürün Ekle
                     </Link>
                 </div>
             ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 animate-fade-in-up animate-fade-in-up-1">
-                    {products.map((product: any) => (
+                <div className="flex flex-col gap-4 animate-fade-in-up animate-fade-in-up-1">
+                    {products.map((product) => (
                         <ProductCard key={product.id} product={product} />
                     ))}
                 </div>

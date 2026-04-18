@@ -10,7 +10,6 @@ export async function POST(req: Request) {
         }
 
         // Extract base64 data
-        // Format: "data:image/jpeg;base64,/9j/4AAQSkZJRg..."
         const match = image.match(/^data:(.+);base64,(.+)$/);
         if (!match) {
             return NextResponse.json({ error: "Invalid image format" }, { status: 400 });
@@ -20,8 +19,27 @@ export async function POST(req: Request) {
         const base64Data = match[2];
         const buffer = Buffer.from(base64Data, "base64");
 
+        // MIME type validation
+        const allowedMimeTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+        if (!allowedMimeTypes.includes(mimeType)) {
+            return NextResponse.json(
+                { error: `Desteklenmeyen dosya türü: ${mimeType}. Sadece JPG, PNG, WebP kabul edilir.` },
+                { status: 400 }
+            );
+        }
+
+        // File size validation (10MB max)
+        const maxSize = 10 * 1024 * 1024;
+        if (buffer.length > maxSize) {
+            return NextResponse.json(
+                { error: `Dosya çok büyük (${(buffer.length / 1024 / 1024).toFixed(1)}MB). Maksimum 10MB kabul edilir.` },
+                { status: 400 }
+            );
+        }
+
         const extension = mimeType.split("/")[1] || "jpg";
         const filename = `${folder}/${Date.now()}-${Math.random().toString(36).substring(7)}.${extension}`;
+
 
         const bucketName = process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET;
         const projectId = process.env.FIREBASE_PROJECT_ID || process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;

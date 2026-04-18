@@ -23,7 +23,7 @@ export function SyncAttributesButton() {
             } else {
                 setMessage(`Hata: ${data.error}`);
             }
-        } catch (error) {
+        } catch {
             setMessage("Bağlantı hatası oluştu.");
         } finally {
             setLoading(false);

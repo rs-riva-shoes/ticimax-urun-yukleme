@@ -1,7 +1,5 @@
 import { NextResponse } from 'next/server';
 import { adminDb } from '@/lib/firebase-admin';
-import fs from 'fs';
-import path from 'path';
 
 export async function POST() {
     try {
@@ -40,7 +38,11 @@ export async function POST() {
             return NextResponse.json({ success: false, error: "Ticimax bağlantı hatası" }, { status: 500 });
         }
 
-        const brands: any[] = [];
+        interface BrandItem {
+            ticimaxId: number;
+            name: string;
+        }
+        const brands: BrandItem[] = [];
         const cleanXml = responseText.replace(/<[a-zA-Z0-9_]+:/g, '<').replace(/<\/[a-zA-Z0-9_]+:/g, '</');
         const brandRegex = /<Marka>([\s\S]*?)<\/Marka>/g;
         let match;

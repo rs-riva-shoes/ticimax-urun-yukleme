@@ -1,8 +1,7 @@
 import { Sparkles } from "lucide-react";
-import { useState } from "react";
 import hierarchicalCategories from "@/data/hierarchical-categories.json";
-import productTypeCategories from "@/data/product-type-categories.json";
-// brands.json import removed
+import type { Brand, Supplier } from "@/lib/types";
+import { useEffect, useState } from "react";
 
 interface CategorySelectorProps {
     hierarchicalCategoryName: string;
@@ -15,11 +14,11 @@ interface CategorySelectorProps {
     selectedBrand: string;
     setSelectedBrand: (value: string) => void;
     setSelectedBrandName: (value: string) => void;
-    suppliers: any[];
+    suppliers: Supplier[];
     selectedSupplier: string;
     setSelectedSupplier: (value: string) => void;
     onAddSupplier: (name: string, ticimaxId: string) => Promise<void>;
-    brands: any[]; // Marka listesi
+    brands: Brand[];
     onAddBrand: (name: string) => Promise<void>;
 }
 
@@ -41,19 +40,33 @@ export function CategorySelector({
     brands = [],
     onAddBrand
 }: CategorySelectorProps) {
+    const [dynamicCategories, setDynamicCategories] = useState<{ id: string, name: string }[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
+
+    useEffect(() => {
+        const fetchCategories = async () => {
+            setIsLoading(true);
+            try {
+                const res = await fetch("/api/settings/categories");
+                const data = await res.json();
+                if (data.success && data.list) {
+                    setDynamicCategories(data.list);
+                }
+            } catch (error) {
+                console.error("Failed to fetch categories:", error);
+            } finally {
+                setIsLoading(true); // Should be false but wait...
+                setIsLoading(false);
+            }
+        };
+        fetchCategories();
+    }, []);
+
     const [isAddingSupplier, setIsAddingSupplier] = useState(false);
     const [newSupplierName, setNewSupplierName] = useState("");
 
     const [isAddingBrand, setIsAddingBrand] = useState(false);
     const [newBrandName, setNewBrandName] = useState("");
-
-    const handleAddSupplier = async () => {
-        if (!newSupplierName) return;
-        // İkinci parametre artık dummy string ("")
-        await onAddSupplier(newSupplierName, "");
-        setIsAddingSupplier(false);
-        setNewSupplierName("");
-    };
 
     return (
         <div className="space-y-4">
@@ -70,13 +83,11 @@ export function CategorySelector({
                         const selectedName = e.target.value;
                         setHierarchicalCategoryName(selectedName);
                         // Find and set the IDs
-                        // @ts-ignore
-                        for (const [mainCat, data] of Object.entries(hierarchicalCategories)) {
-                            // @ts-ignore
-                            const subcats = data.subcategories;
-                            for (const [key, subdata] of Object.entries(subcats)) {
-                                if ((subdata as any).name === selectedName) {
-                                    setHierarchicalCategoryIds((subdata as any).ids);
+                        for (const [, data] of Object.entries(hierarchicalCategories)) {
+                            const subcats = (data as Record<string, unknown>).subcategories as Record<string, Record<string, unknown>>;
+                            for (const [, subdata] of Object.entries(subcats)) {
+                                if (subdata.name === selectedName) {
+                                    setHierarchicalCategoryIds(subdata.ids as string[]);
                                     break;
                                 }
                             }
@@ -85,14 +96,14 @@ export function CategorySelector({
                 >
                     <option value="">Kategori Seçiniz</option>
                     {Object.entries(hierarchicalCategories).map(([mainCat, data]) => {
-                        const mainData = data as any;
+                        const mainData = data as Record<string, unknown>;
+                        const subcategories = mainData.subcategories as Record<string, Record<string, unknown>>;
                         return (
-                            <optgroup key={mainCat} label={mainData.name}>
-                                {Object.entries(mainData.subcategories).map(([key, subdata]) => {
-                                    const subcatData = subdata as any;
+                            <optgroup key={mainCat} label={mainData.name as string}>
+                                {Object.entries(subcategories).map(([, subdata]) => {
                                     return (
-                                        <option key={subcatData.name} value={subcatData.name}>
-                                            {subcatData.name}
+                                        <option key={subdata.name as string} value={subdata.name as string}>
+                                            {subdata.name as string}
                                         </option>
                                     );
                                 })}
@@ -119,18 +130,21 @@ export function CategorySelector({
                     onChange={(e) => {
                         const selectedId = e.target.value;
                         setProductTypeCategoryId(selectedId);
-                        const selectedCat = productTypeCategories.find((c: any) => c.id === selectedId);
+                        const selectedCat = dynamicCategories.find(c => c.id === selectedId);
                         if (selectedCat) {
-                            setProductTypeCategoryName((selectedCat as any).name);
+                            setProductTypeCategoryName(selectedCat.name);
                         }
                     }}
                 >
-                    <option value="">Ürün Tipi Seçiniz</option>
-                    {productTypeCategories.map((cat: any) => (
+                    <option value="">{isLoading ? "Yükleniyor..." : "Ürün Tipi Seçiniz"}</option>
+                    {dynamicCategories.map((cat) => (
                         <option key={cat.id} value={cat.id}>
                             {cat.name} ({cat.id})
                         </option>
                     ))}
+                    {dynamicCategories.length === 0 && !isLoading && (
+                        <option disabled>Kategori bulunamadı. Lütfen senkronize edin.</option>
+                    )}
                 </select>
             </div>
 
@@ -178,12 +192,15 @@ export function CategorySelector({
                         onChange={(e) => {
                             const selectedId = e.target.value;
                             setSelectedBrand(selectedId);
-                            const found = brands.find((b: any) => (b.id?.toString() === selectedId) || (b.ticimaxId?.toString() === selectedId));
+                            const found = brands.find(b => {
+                                const id = b.id?.toString() || b.ticimaxId?.toString();
+                                return id === selectedId;
+                            });
                             if (found) setSelectedBrandName(found.name);
                         }}
                     >
                         <option value="">Marka Seçiniz</option>
-                        {brands.map((brand: any) => (
+                        {brands.map((brand) => (
                             <option key={brand.id || brand.ticimaxId} value={brand.id || brand.ticimaxId}>
                                 {brand.name}
                             </option>

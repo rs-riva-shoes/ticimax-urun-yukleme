@@ -12,16 +12,11 @@ const escapeXml = (unsafe: string | number | undefined) => {
         .replace(/'/g, '&apos;');
 };
 
-// Yardımcı: XML'den Değer Çekme (Regex ile basit parse)
-const extractValue = (xml: string, tag: string) => {
-    const regex = new RegExp(`<${tag}>(.*?)<\/${tag}>`);
-    const match = xml.match(regex);
-    return match ? match[1] : null;
-};
+
 
 // Yardımcı: XML'den Liste Çekme (Namespace Temizleyerek)
 const extractSuppliersFromXml = (xml: string) => {
-    const suppliers: any[] = [];
+    const suppliers: Record<string, unknown>[] = [];
 
     // 1. Tüm Namespace prefixlerini temizle (<a:Tanim> -> <Tanim>)
     const cleanXml = xml.replace(/<[a-zA-Z0-9_]+:/g, '<').replace(/<\/[a-zA-Z0-9_]+:/g, '</');

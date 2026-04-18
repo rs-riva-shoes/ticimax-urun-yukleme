@@ -24,8 +24,7 @@ export async function POST(req: Request) {
 
         const counterRef = adminDb.collection("counters").doc(period);
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const result = await adminDb.runTransaction(async (t: any) => {
+        const result = await adminDb.runTransaction(async (t) => {
             const productDoc = await t.get(productRef);
             const productData = productDoc.exists ? productDoc.data() : null;
             if (!productDoc.exists) throw new Error("Product not found");

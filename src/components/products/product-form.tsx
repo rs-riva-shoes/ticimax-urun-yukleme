@@ -2,10 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Wand2, Eye } from "lucide-react";
-import { storage } from "@/lib/firebase";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { validatePushPayload } from "@/lib/utils";
+import type { Attribute, Brand, Supplier, ColorSetting, ProductVariant } from "@/lib/types";
 
 // Sub-components
 import { ImageUpload } from "./form-sections/ImageUpload";
@@ -19,22 +18,10 @@ import { ShippingInfo } from "./form-sections/ShippingInfo";
 // Data
 import productTypeCategories from "@/data/product-type-categories.json";
 
-interface AttributeValue {
-    valueId: number;
-    name: string;
-}
-
-interface Attribute {
-    featureId: number;
-    name: string;
-    groupId?: number;
-    values: AttributeValue[];
-}
-
 interface ProductFormProps {
     attributes: Attribute[];
-    brands: any[];
-    suppliers: any[];
+    brands: Brand[];
+    suppliers: Supplier[];
 }
 
 export function ProductForm({ attributes, brands: initialBrands, suppliers: initialSuppliers }: ProductFormProps) {
@@ -42,7 +29,8 @@ export function ProductForm({ attributes, brands: initialBrands, suppliers: init
     const [files, setFiles] = useState<File[]>([]);
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
-    const [productCode, setProductCode] = useState(""); // Model Kodu / Stok Kodu
+    const [productCode, setProductCode] = useState("");
+    const [, setValidationErrors] = useState<string[]>([]);
 
     // AI States
     const [aiLoading, setAiLoading] = useState(false);
@@ -59,11 +47,11 @@ export function ProductForm({ attributes, brands: initialBrands, suppliers: init
 
     const [selectedBrand, setSelectedBrand] = useState("");
     const [selectedBrandName, setSelectedBrandName] = useState("");
-    const [brands, setBrands] = useState<any[]>(initialBrands); // Markalar listesi
+    const [brands, setBrands] = useState<Brand[]>(initialBrands);
 
     // Suppliers
-    const [suppliers, setSuppliers] = useState<any[]>(initialSuppliers);
-    const [selectedSupplier, setSelectedSupplier] = useState("1"); // Varsayılan: 1
+    const [suppliers, setSuppliers] = useState<Supplier[]>(initialSuppliers);
+    const [selectedSupplier, setSelectedSupplier] = useState("1");
 
     // Pricing
     const [purchasePrice, setPurchasePrice] = useState("");
@@ -80,20 +68,9 @@ export function ProductForm({ attributes, brands: initialBrands, suppliers: init
     });
 
     // Variants & Color Settings
-    interface Variant {
-        size: string;
-        color: string;
-        qty: number;
-        sku?: string;
-        barcode?: string;
-    }
-    const [variants, setVariants] = useState<Variant[]>([]);
+    const [variants, setVariants] = useState<ProductVariant[]>([]);
 
     // Color Settings (Image Mapping & Custom Titles)
-    interface ColorSetting {
-        imageIndices: number[];
-        title: string;
-    }
     const [colorSettings, setColorSettings] = useState<Record<string, ColorSetting>>({});
 
     // Attributes
@@ -109,7 +86,7 @@ export function ProductForm({ attributes, brands: initialBrands, suppliers: init
 
 
     // Add New Supplier Handler
-    const handleAddSupplier = async (name: string, _ignoredId: string) => {
+    const handleAddSupplier = async (name: string) => {
         try {
             const res = await fetch("/api/settings/suppliers", {
                 method: "POST",
@@ -372,7 +349,6 @@ export function ProductForm({ attributes, brands: initialBrands, suppliers: init
             },
             variants: variants.map(v => {
                 // Enrich variant with specific image URL and Title if available
-                // Robust lookup to handle case/whitespace differences
                 const normalize = (s: string) => s?.trim().toLowerCase() || "";
                 const matchedColorKey = Object.keys(colorSettings).find(
                     key => normalize(key) === normalize(v.color)
@@ -389,10 +365,9 @@ export function ProductForm({ attributes, brands: initialBrands, suppliers: init
                 return {
                     ...v,
                     qty: Number(v.qty),
-                    image: variantImages[0] || "", // Keep for backward compatibility/preview
-                    images: variantImages, // Send all images
-                    customTitle: setting?.title || "", // Add custom title
-                    _debugIndices: setting?.imageIndices || [] // Debug info to trace selection
+                    image: variantImages[0] || "",
+                    images: variantImages,
+                    customTitle: setting?.title || "",
                 };
             }),
             selectedAttributes: Object.entries(selectedAttributes).map(([k, v]) => {
@@ -437,18 +412,14 @@ export function ProductForm({ attributes, brands: initialBrands, suppliers: init
             // 2. Prepare Payload (Enriched with Image URLs)
             const payload = preparePayload(imageUrls);
 
-            const productData = {
+            const productData: Record<string, unknown> = {
                 ...payload,
                 id: savedProductId,
-                images: imageUrls, // Main image list
+                images: imageUrls,
                 status: "draft",
                 updatedAt: new Date().toISOString(),
+                ...(!savedProductId ? { createdAt: new Date().toISOString() } : {})
             };
-
-            if (!savedProductId) {
-                // @ts-expect-error - Adding field dynamically
-                productData.createdAt = new Date().toISOString();
-            }
 
             const response = await fetch("/api/products/save", {
                 method: "POST",
@@ -484,6 +455,16 @@ export function ProductForm({ attributes, brands: initialBrands, suppliers: init
 
             // 2. Prepare Payload
             const payload = preparePayload(imageUrls);
+
+            const validation = validatePushPayload(payload);
+            if (!validation.isValid) {
+                setValidationErrors(validation.errors.map(e => e.message));
+                setPushStatus("error");
+                alert("Eksik alanlar:\n" + validation.errors.map(e => `• ${e.message}`).join("\n"));
+                return;
+            }
+            setValidationErrors([]);
+
             console.log("[Client] Payload hazır. API isteği atılıyor...");
 
             // 60-second timeout
@@ -493,6 +474,7 @@ export function ProductForm({ attributes, brands: initialBrands, suppliers: init
             try {
                 const res = await fetch("/api/ticimax/push", {
                     method: "POST",
+                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                         productId: savedProductId || "NEW",
                         ...payload,
@@ -554,13 +536,6 @@ export function ProductForm({ attributes, brands: initialBrands, suppliers: init
 
     return (
         <>
-            <ReviewModal
-                showReview={showReview}
-                setShowReview={setShowReview}
-                payload={preparePayload()}
-                handlePush={handlePush}
-                pushStatus={pushStatus}
-            />
 
             {/* ─── Sticky Header Bar ─── */}
             <div className="sticky top-0 z-40 bg-white/80 backdrop-blur-lg border-b border-stone-200/60">
@@ -702,7 +677,6 @@ export function ProductForm({ attributes, brands: initialBrands, suppliers: init
                         variants={variants}
                         setVariants={setVariants}
                         productCode={productCode}
-                        selectedCategoryId={productTypeCategoryId}
                         categoryName={productTypeCategoryName}
                         files={files}
                         colorSettings={colorSettings}

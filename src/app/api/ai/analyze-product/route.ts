@@ -3,10 +3,6 @@ import { openai } from "@/lib/openai";
 import hierarchicalCategories from "@/data/hierarchical-categories.json";
 import productTypeCategories from "@/data/product-type-categories.json";
 
-interface Category {
-    id: string;
-    name: string;
-}
 
 interface ProductTypeCategory {
     id: string;
@@ -20,15 +16,18 @@ interface Attribute {
     values: { valueId: number; name: string }[];
 }
 
+interface Subcategory {
+    ids: string[];
+    name: string;
+}
+
+interface MainCategory {
+    id: string;
+    name: string;
+    subcategories: Record<string, Subcategory>;
+}
+
 export async function POST(req: Request) {
-    console.log("--- DEBUG: API Key Check ---");
-    const key = process.env.APP_OPENAI_API_KEY || process.env.OPENAI_API_KEY;
-    console.log("Kullanılan Anahtar:", process.env.APP_OPENAI_API_KEY ? "APP_OPENAI_API_KEY (.env.local)" : "OPENAI_API_KEY (Sistem/Env)");
-    console.log("Key Mevcut mu:", !!key);
-    console.log("Key Uzunluğu:", key?.length);
-    console.log("Key Başlangıç:", key?.substring(0, 8));
-    if (key?.includes('"')) console.log("UYARI: Key içinde tırnak işareti var!");
-    if (key?.trim() !== key) console.log("UYARI: Key başında/sonunda boşluk var!");
 
     try {
         const { title, images, categories, attributes } = await req.json();
@@ -46,12 +45,10 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: "categories list is required" }, { status: 400 });
         }
 
-        // Create category list for AI
-        const categoryList = categories.map((c: Category) => `ID: ${c.id} - ${c.name}`).join("\n");
 
         // Create hierarchical categories list for AI
-        const hierarchicalCategoryList = Object.entries(hierarchicalCategories).map(([mainCat, data]: [string, any]) => {
-            const subcats = Object.entries(data.subcategories).map(([key, subdata]: [string, any]) => {
+        const hierarchicalCategoryList = Object.values(hierarchicalCategories as Record<string, MainCategory>).map((data) => {
+            const subcats = Object.values(data.subcategories).map((subdata) => {
                 return `  - ${subdata.name}: IDs [${subdata.ids.join(", ")}]`;
             }).join("\n");
             return `${data.name} (ID: ${data.id}):\n${subcats}`;

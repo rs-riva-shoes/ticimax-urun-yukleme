@@ -1,6 +1,5 @@
 import { Input } from "@/components/ui/input";
 import { Truck } from "lucide-react";
-import { useEffect, useState } from "react";
 
 interface Dimensions {
     width: string;
@@ -15,16 +14,11 @@ interface ShippingInfoProps {
 }
 
 export function ShippingInfo({ dimensions, setDimensions }: ShippingInfoProps) {
-    const [desi, setDesi] = useState<number>(0);
-
-    useEffect(() => {
-        const w = parseFloat(dimensions.width) || 0;
-        const h = parseFloat(dimensions.height) || 0;
-        const d = parseFloat(dimensions.depth) || 0;
-        // Standart Desi Formülü: (En x Boy x Yükseklik) / 3000
-        const calculatedDesi = (w * h * d) / 3000;
-        setDesi(parseFloat(calculatedDesi.toFixed(2)));
-    }, [dimensions]);
+    const w = parseFloat(dimensions.width) || 0;
+    const h = parseFloat(dimensions.height) || 0;
+    const d = parseFloat(dimensions.depth) || 0;
+    const calculatedDesi = (w * h * d) / 3000;
+    const desi = parseFloat(calculatedDesi.toFixed(2));
 
     const handleChange = (field: keyof Dimensions, value: string) => {
         setDimensions(prev => ({ ...prev, [field]: value }));

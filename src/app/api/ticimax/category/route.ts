@@ -1,20 +1,61 @@
 import { NextResponse } from "next/server";
 
 export async function GET() {
-    // In a real scenario, we would soap client.GetCategories() or similar
-    // For now, returning a mock list of categories relevant to shoes/clothing
-    const mockCategories = [
-        { id: "101", name: "Kadın Çanta" },
-        { id: "102", name: "Kadın Ayakkabı" },
-        { id: "103", name: "Kadın Sandalet" },
-        { id: "104", name: "Kadın Terlik" },
-        { id: "105", name: "Kadın Bot" },
-        { id: "106", name: "Erkek Ayakkabı" },
-        { id: "107", name: "Erkek Bot" },
-        { id: "108", name: "Çocuk Ayakkabı" },
-        { id: "201", name: "Yeni Sezon" },
-        { id: "202", name: "İndirimli Ürünler" },
-    ];
+    try {
+        const domain = process.env.TICIMAX_DOMAIN;
+        const userCode = process.env.TICIMAX_USER;
+        const password = process.env.TICIMAX_PASS;
 
-    return NextResponse.json({ success: true, categories: mockCategories });
+        if (!domain || !userCode || !password) {
+            return NextResponse.json({ success: false, error: "API kimlik bilgileri eksik." }, { status: 500 });
+        }
+
+        const ticimaxUrl = `${domain}/Servis/UrunServis.svc`;
+
+        const xml = `<?xml version="1.0" encoding="utf-8"?>
+<soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <soap:Body>
+    <SelectKategori xmlns="http://tempuri.org/">
+      <UyeKodu>${userCode}</UyeKodu>
+      <Sifre>${password}</Sifre>
+    </SelectKategori>
+  </soap:Body>
+</soap:Envelope>`;
+
+        const res = await fetch(ticimaxUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "text/xml; charset=utf-8",
+                "SOAPAction": "http://tempuri.org/IUrunServis/SelectKategori"
+            },
+            body: xml,
+            cache: 'no-store'
+        });
+
+        const text = await res.text();
+        const regex = /<a:Kategori[^>]*>([\s\S]*?)<\/a:Kategori>/g;
+        let match;
+        const categories = [];
+
+        while ((match = regex.exec(text)) !== null) {
+            const catXml = match[1];
+            const idMatch = catXml.match(/<a:ID>(.*?)<\/a:ID>/);
+            const nameMatch = catXml.match(/<a:Tanim>(.*?)<\/a:Tanim>/);
+            
+            if (idMatch && nameMatch) {
+                categories.push({
+                    id: idMatch[1],
+                    name: nameMatch[1]
+                });
+            }
+        }
+
+        // Alfabetik sırala
+        categories.sort((a, b) => a.name.localeCompare(b.name, 'tr-TR'));
+
+        return NextResponse.json({ success: true, categories });
+    } catch (error) {
+        console.error("Kategori çekme hatası:", error);
+        return NextResponse.json({ success: false, error: error instanceof Error ? error.message : String(error) }, { status: 500 });
+    }
 }

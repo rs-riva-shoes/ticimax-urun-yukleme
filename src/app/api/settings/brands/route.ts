@@ -55,7 +55,7 @@ export async function GET() {
         }
 
         // XML Parse (Namespace Temizleyerek & Daha Basit Regex)
-        const brands: any[] = [];
+        const brands: Record<string, unknown>[] = [];
 
         // 1. Tüm Namespace prefixlerini temizle (<a:Marka> -> <Marka>)
         // Ayrıca <MarkaID> ile karışmaması için sadece tag açılış kapanışlarına dikkat etmeliyiz ama 

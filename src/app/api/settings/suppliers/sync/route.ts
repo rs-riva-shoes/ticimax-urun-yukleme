@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import { adminDb } from '@/lib/firebase-admin';
-import path from 'path';
 
 export async function POST() {
     try {
@@ -39,7 +38,11 @@ export async function POST() {
             return NextResponse.json({ success: false, error: "Ticimax bağlantı hatası" }, { status: 500 });
         }
 
-        const suppliers: any[] = [];
+        interface SupplierItem {
+            ticimaxId: number;
+            name: string;
+        }
+        const suppliers: SupplierItem[] = [];
         const cleanXml = responseText.replace(/<[a-zA-Z0-9_]+:/g, '<').replace(/<\/[a-zA-Z0-9_]+:/g, '</');
         const supplierRegex = /<Tedarikci>([\s\S]*?)<\/Tedarikci>/g;
         let match;

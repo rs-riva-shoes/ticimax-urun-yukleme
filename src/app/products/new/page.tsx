@@ -26,23 +26,25 @@ export default async function NewProductPage() {
     // The previous code parsedInt because JSON might have strings.
     // Firestore data should be clean if we saved it correctly, but let's be safe.
 
-    const attributes = Array.isArray(attributesRaw) ? attributesRaw.map((attr: any) => ({
+    const attributes = Array.isArray(attributesRaw) ? attributesRaw.map((attr: { featureId: string | number; featureName: string; groupId?: string | number; values?: { valueId: string | number; valueName: string }[] }) => ({
         featureId: Number(attr.featureId),
         name: attr.featureName,
         groupId: Number(attr.groupId || 0),
-        values: Array.isArray(attr.values) ? attr.values.map((val: any) => ({
+        values: Array.isArray(attr.values) ? attr.values.map((val: { valueId: string | number; valueName: string }) => ({
             valueId: Number(val.valueId),
             name: val.valueName
         })) : []
     })) : [];
 
-    const brands = Array.isArray(brandsRaw) ? brandsRaw.map((b: any) => ({
+    const brands = Array.isArray(brandsRaw) ? brandsRaw.map((b: { ticimaxId?: string | number; id?: string | number; name: string }) => ({
         ...b,
+        id: b.id?.toString(),
         ticimaxId: Number(b.ticimaxId || b.id) // Ensure ID is number
     })) : [];
 
-    const suppliers = Array.isArray(suppliersRaw) ? suppliersRaw.map((s: any) => ({
+    const suppliers = Array.isArray(suppliersRaw) ? suppliersRaw.map((s: { ticimaxId?: string | number; id?: string | number; name: string }) => ({
         ...s,
+        id: s.id?.toString(),
         ticimaxId: Number(s.ticimaxId || s.id)
     })) : [];
 

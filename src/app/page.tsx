@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { adminDb } from "@/lib/firebase-admin";
 import { SyncDataButtons } from "@/components/settings/sync-data-buttons";
+import type { Product } from "@/lib/types";
 import {
   PackageOpen,
-  TrendingUp,
   Clock,
   ArrowRight,
   Plus,
@@ -28,9 +28,9 @@ export default async function Dashboard() {
     .limit(6)
     .get();
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const latestProducts = latestSnapshot.docs.map(
-    (doc) => ({ id: doc.id, ...doc.data() }) as any
+    (doc) => ({ id: doc.id, ...(doc.data() as Omit<Product, 'id'>) } as Product)
   );
 
   return (
@@ -107,7 +107,7 @@ export default async function Dashboard() {
           <p className="text-3xl font-extrabold text-stone-900">
             {latestProducts[0]?.createdAt
               ? new Date(
-                (latestProducts[0].createdAt._seconds || latestProducts[0].createdAt.seconds || 0) * 1000
+                ( (latestProducts[0].createdAt as import('@/lib/types').FirestoreTimestamp)._seconds || (latestProducts[0].createdAt as import('@/lib/types').FirestoreTimestamp).seconds || 0) * 1000
               ).toLocaleDateString("tr-TR", { day: "numeric", month: "short" })
               : "-"}
           </p>

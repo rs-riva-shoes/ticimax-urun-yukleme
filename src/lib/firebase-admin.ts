@@ -1,7 +1,7 @@
 import { initializeApp, getApps, getApp, cert, ServiceAccount } from "firebase-admin/app";
-import { getFirestore } from "firebase-admin/firestore";
-import { getStorage } from "firebase-admin/storage";
-import { getAuth } from "firebase-admin/auth";
+import { getFirestore, Firestore } from "firebase-admin/firestore";
+import { getStorage, Storage } from "firebase-admin/storage";
+import { getAuth, Auth } from "firebase-admin/auth";
 
 const serviceAccount: ServiceAccount = {
     projectId: process.env.FIREBASE_PROJECT_ID,
@@ -11,12 +11,9 @@ const serviceAccount: ServiceAccount = {
 };
 
 let app;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-let adminDb: any;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-let adminStorage: any;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-let adminAuth: any;
+let adminDb: Firestore;
+let adminStorage: Storage;
+let adminAuth: Auth;
 
 try {
     if (serviceAccount.projectId && serviceAccount.clientEmail && serviceAccount.privateKey) {
@@ -45,9 +42,9 @@ try {
             }),
             batch: () => ({ set: () => { }, commit: async () => { } }),
             runTransaction: async () => { return "MOCK_SKU"; }
-        };
-        adminStorage = { bucket: () => ({}) };
-        adminAuth = {};
+        } as unknown as Firestore;
+        adminStorage = { bucket: () => ({}) } as unknown as Storage;
+        adminAuth = {} as unknown as Auth;
     }
 } catch (error) {
     console.error("Firebase Admin Init Error:", error);
