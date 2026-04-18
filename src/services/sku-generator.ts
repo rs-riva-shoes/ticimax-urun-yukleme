@@ -1,4 +1,4 @@
-import { sanitizeTurkishAlphaOnly } from './utils';
+import { sanitizeTurkishAlphaOnly } from '@/utils';
 
 export interface SKUParams {
     brandName: string;
