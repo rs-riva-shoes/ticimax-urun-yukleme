@@ -1,8 +1,8 @@
 import OpenAI from "openai";
 import { env } from "@/config/env";
 
-const getOpenAIClient = () => {
-    const apiKey = env.OPENAI_API_KEY;
+export const createOpenAIClient = (apiKeyOverride?: string) => {
+    const apiKey = apiKeyOverride !== undefined ? apiKeyOverride : env.OPENAI_API_KEY;
     
     if (!apiKey) {
         if (process.env.NODE_ENV === "development") {
@@ -11,12 +11,11 @@ const getOpenAIClient = () => {
         return null;
     }
     
-    // Sadece sunucu tarafında ve uygulama başlarken bir kez görelim
-    if (typeof window === 'undefined') {
+    if (typeof window === 'undefined' || process.env.NODE_ENV === 'test') {
         console.log(`✅ OpenAI anahtarı yüklendi: ${apiKey.substring(0, 10)}...`);
     }
     
-    return new OpenAI({ apiKey });
+    return new OpenAI({ apiKey, dangerouslyAllowBrowser: true });
 };
 
-export const openai = getOpenAIClient() as OpenAI;
+export const openai = createOpenAIClient() as OpenAI;

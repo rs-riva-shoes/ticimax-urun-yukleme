@@ -4,55 +4,79 @@ import { getStorage, Storage } from "firebase-admin/storage";
 import { getAuth, Auth } from "firebase-admin/auth";
 import { env } from "@/config/env";
 
-const serviceAccount: ServiceAccount = {
-    projectId: env.FIREBASE_PROJECT_ID,
-    clientEmail: env.FIREBASE_CLIENT_EMAIL,
-    // Handle private key newlines
-    privateKey: env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, "\n"),
-};
-
-let app;
-let adminDb: Firestore;
-let adminStorage: Storage;
-let adminAuth: Auth;
-
-try {
-    if (serviceAccount.projectId && serviceAccount.clientEmail && serviceAccount.privateKey) {
-        app = !getApps().length
-            ? initializeApp({
-                credential: cert(serviceAccount),
-                storageBucket: env.FIREBASE_STORAGE_BUCKET, // Optional: for admin storage access
-            })
-            : getApp();
-
-        adminDb = getFirestore(app);
-        adminStorage = getStorage(app);
-        adminAuth = getAuth(app);
-    } else {
-        console.warn("Firebase Admin Credentials missing. Using mock/disabled mode.");
-        // Mock db to prevent crash on page load
-        adminDb = {
-            collection: () => ({
-                get: async () => ({ docs: [] }), // return empty list
-                doc: () => ({
-                    get: async () => ({ exists: false, data: () => ({}) }),
-                    set: async () => { },
-                    update: async () => { }
-                }),
-                where: () => ({ 
-                    get: async () => ({ empty: true, docs: [] }),
-                    count: () => ({ get: async () => ({ data: () => ({ count: 0 }) }) })
-                }),
+export const createMockFirestore = (): Firestore => {
+    return {
+        collection: () => ({
+            get: async () => ({ docs: [] }),
+            doc: () => ({
+                get: async () => ({ exists: false, data: () => ({}) }),
+                set: async () => { },
+                update: async () => { }
+            }),
+            where: () => ({ 
+                get: async () => ({ empty: true, docs: [] }),
                 count: () => ({ get: async () => ({ data: () => ({ count: 0 }) }) })
             }),
-            batch: () => ({ set: () => { }, commit: async () => { } }),
-            runTransaction: async () => { return "MOCK_SKU"; }
-        } as unknown as Firestore;
-        adminStorage = { bucket: () => ({}) } as unknown as Storage;
-        adminAuth = {} as unknown as Auth;
-    }
-} catch (error) {
-    console.error("Firebase Admin Init Error:", error);
+            count: () => ({ get: async () => ({ data: () => ({ count: 0 }) }) })
+        }),
+        batch: () => ({ set: () => { }, commit: async () => { } }),
+        runTransaction: async () => { return "MOCK_SKU"; }
+    } as unknown as Firestore;
+};
+
+export interface FirebaseConfig {
+    projectId: string;
+    clientEmail: string;
+    privateKey: string;
+    storageBucket?: string;
 }
 
-export { adminDb, adminStorage, adminAuth };
+export const getFirebaseServices = (configOverride?: FirebaseConfig) => {
+    const serviceAccount: ServiceAccount = {
+        projectId: configOverride ? configOverride.projectId : env.FIREBASE_PROJECT_ID,
+        clientEmail: configOverride ? configOverride.clientEmail : env.FIREBASE_CLIENT_EMAIL,
+        privateKey: (configOverride ? configOverride.privateKey : env.FIREBASE_PRIVATE_KEY)?.replace(/\\n/g, "\n"),
+    };
+
+    let app;
+    let db: Firestore;
+    let storage: Storage;
+    let auth: Auth;
+
+    try {
+        if (serviceAccount.projectId && serviceAccount.clientEmail && serviceAccount.privateKey) {
+            app = !getApps().length
+                ? initializeApp({
+                    credential: cert(serviceAccount),
+                    storageBucket: configOverride?.storageBucket || env.FIREBASE_STORAGE_BUCKET,
+                })
+                : getApp();
+
+            db = getFirestore(app);
+            storage = getStorage(app);
+            auth = getAuth(app);
+        } else {
+            if (typeof window === 'undefined' || process.env.NODE_ENV === 'test') {
+                console.warn("Firebase Admin Credentials missing. Using mock/disabled mode.");
+            }
+            db = createMockFirestore();
+            storage = { bucket: () => ({}) } as unknown as Storage;
+            auth = {} as unknown as Auth;
+        }
+    } catch (error) {
+        if (typeof window === 'undefined' || process.env.NODE_ENV === 'test') {
+            console.error("Firebase Admin Init Error:", error);
+        }
+        db = createMockFirestore();
+        storage = { bucket: () => ({}) } as unknown as Storage;
+        auth = {} as unknown as Auth;
+    }
+
+    return { db, storage, auth };
+};
+
+// Singleton initialization
+const services = getFirebaseServices();
+export const adminDb = services.db;
+export const adminStorage = services.storage;
+export const adminAuth = services.auth;
