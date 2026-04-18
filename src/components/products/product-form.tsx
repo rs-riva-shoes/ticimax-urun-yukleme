@@ -212,6 +212,9 @@ export function ProductForm({ attributes, brands: initialBrands, suppliers: init
                 const data = await response.json();
 
                 if (data.success) {
+                    if (data.suggestedTitle) {
+                        setTitle(data.suggestedTitle);
+                    }
                     setDescription(data.descriptionHtml || `<p><strong>${title}</strong></p>`);
 
                     if (data.hierarchicalCategoryIds) {

@@ -96,43 +96,44 @@ ${productTypeCategoryList}
 - **TEKNİK ÖZELLİK HAVUZU:**
 ${attributesList}
 
-**ADIM 1: AÇIKLAMA (HTML)**
-Müşteriyi ikna edecek, SEO uyumlu, "Özellik + Fayda" yapısında madde madde açıklama yaz. (<ul><li>...</li></ul>)
+**ADIM 1: AÇIKLAMA (TRENDYOL STİLİ - HTML)**
+- Sadece <ul><li> yapısında yaz. 
+- Her madde "Özellik + Sağladığı Fayda" şeklinde olmalıdır. (Örn: "Özel Phylon Taban: Hafif yapısıyla gün boyu yorulmadan hareket etmenizi sağlar.")
+- Mutlaka Materyal, İç astar, Taban yapısı ve Kullanım alanı bilgilerini içer.
+- Sonuna şu notu ekle: "<div style='font-size:11px; color:#888; margin-top:10px;'>Stüdyo çekimlerinde ışık farklılığından dolayı renkler değişiklik gösterebilir.</div>"
 
-**ADIM 2: KATEGORİ SEÇİMİ (KRİTİK)**
-- Ürün bir TERLİK mi? O zaman "Terlik" kategorisini seç. "Ayakkabı" seçme.
-- Ürün bir BOT mu? O zaman "Bot" kategorisini seç.
-- Hiyerarşik kategoride en alt kırılımı (örn: "Kadın > Terlik > Parmak Arası") bulmaya çalış.
+**ADIM 2: KATEGORİ VE ÖZELLİK SEÇİMİ**
+- Ürünün görselini havuzdaki özelliklerle eşleştir. 
+- Topuk boyu, Materyal, Kapama şekli ve Desen özelliklerini "attributeSelections" içine ID olarak ekle.
+- **attributeSelections** asla boş kalmamalı. En az 4 tane teknik özellik ID'si bul.
 
-**ADIM 3: TEKNİK ÖZELLİK EŞLEŞTİRME (ZORUNLU)**
-- "TEKNİK ÖZELLİK HAVUZU"ndaki her bir özelliği tek tek kontrol et.
-- Görselde "Cırtlı" mı gördün? Listede "Kapama Şekli" altında "Cırtlı" varsa ID'sini al ve ekle.
-- Görselde "Çiçekli" mi gördün? "Desen" altında "Çiçekli" varsa ekle.
-- **HEDEF:** En az 3-4 tane teknik özellik seçilmiş olmalı.
+**ADIM 3: BAŞLIK OPTİMİZASYONU**
+- Trendyol için ideal başlık: [Marka] + [Materyal] + [Öne Çıkan Özellik] + [Ürün Tipi] + [Kullanım Alanı]
+- Örnek: "Arslan Hakiki Deri Ortopedik Rahat Taban Sneaker Ayakkabı"
 
 **YANIT FORMATI (JSON):**
 {
   "hierarchicalCategoryIds": ["ID1", "ID2", "ID3"],
   "hierarchicalCategoryName": "Kategori Adı",
-  "hierarchicalCategoryReason": "Neden bu kategori?",
   "productTypeCategoryId": "ID",
   "productTypeCategoryName": "İsim",
-  "productTypeCategoryReason": "Neden bu tip?",
+  "suggestedTitle": "Trendyol'a Uygun Optimize Başlık",
   "descriptionHtml": "<ul><li>...</li></ul>",
   "attributeSelections": {
     "featureId": "valueId",
     "featureId2": "valueId2"
-  }
+  },
+  "usageTips": "Kalıp bilgisi veya bakım önerisi (Örn: Tam kalıptır, ayak yapınız genişse 1 numara büyük önerilir.)"
 }
 
-**DİKKAT:** 'attributeSelections' boş dönemez. Mutlaka görselden bir şeyler çıkar.`;
+**KRİTİK:** OpenAI Vision'ı kullanarak ayakkabının materyalini (Rugan, Süet, Deri) ve tabanını (Eva, Kauçuk, Poli) fotoğraftan TAHMİN ET ve içeriği ona göre doldur.`;
 
         const completion = await openai.chat.completions.create({
-            model: "gpt-4o-mini", // Supports vision
+            model: "gpt-4o-mini",
             messages: [
                 {
                     role: "system",
-                    content: "Sen bir ürün analiz uzmanısın. Görsellerden özellikleri çıkarıp verilen listeyle eşleştirirsin. EN İYİ TAHMİNİ yapmaktan çekinme."
+                    content: "Sen bir Trendyol Kategori ve İçerik Yönetimi uzmanısın. JSON formatında, hatasız ve profesyonel e-ticaret verisi üretirsin."
                 },
                 {
                     role: "user",
@@ -143,7 +144,7 @@ Müşteriyi ikna edecek, SEO uyumlu, "Özellik + Fayda" yapısında madde madde 
                 }
             ],
             response_format: { type: "json_object" },
-            temperature: 0.2, // Daha kararlı, less random
+            temperature: 0.2,
             max_tokens: 4000
         });
 
