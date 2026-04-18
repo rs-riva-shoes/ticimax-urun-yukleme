@@ -7,14 +7,15 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     globals: true,
+    setupFiles: ['./src/tests/setup.tsx'],
     alias: {
       '@': path.resolve(__dirname, './src'),
     },
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
-      include: ['src/services/**', 'src/utils/**', 'src/app/api/**'],
-      exclude: ['node_modules/**', 'src/tests/**', 'src/types/**', 'src/config/**'],
+      include: ['src/services/*.ts', 'src/utils/*.ts', 'src/app/api/**/route.ts'],
+      exclude: ['node_modules/**', 'src/tests/**', '**/export-attributes/**', 'src/app/api/admin/**', '**/tmp/**'],
     },
   },
 });

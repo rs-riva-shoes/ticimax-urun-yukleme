@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { openai } from "@/services/openai";
 import hierarchicalCategories from "@/data/hierarchical-categories.json";
 import productTypeCategories from "@/data/product-type-categories.json";
+import { logger, withRetry, handleApiError } from "@/utils/safety";
 
 
 interface ProductTypeCategory {
@@ -128,30 +129,33 @@ ${attributesList}
 
 **KRİTİK:** OpenAI Vision'ı kullanarak ayakkabının materyalini (Rugan, Süet, Deri) ve tabanını (Eva, Kauçuk, Poli) fotoğraftan TAHMİN ET ve içeriği ona göre doldur.`;
 
-        const completion = await openai.chat.completions.create({
-            model: "gpt-4o-mini",
-            messages: [
-                {
-                    role: "system",
-                    content: "Sen bir Trendyol Kategori ve İçerik Yönetimi uzmanısın. JSON formatında, hatasız ve profesyonel e-ticaret verisi üretirsin."
-                },
-                {
-                    role: "user",
-                    content: [
-                        { type: "text", text: prompt },
-                        ...imageContent
-                    ]
-                }
-            ],
-            response_format: { type: "json_object" },
-            temperature: 0.2,
-            max_tokens: 4000
-        });
+        logger.info('AI Product Analysis Pipeline Started', { title: title || 'N/A', imageCount: images.length });
+
+        const completion = await withRetry(async () => {
+            const result = await openai.chat.completions.create({
+                model: "gpt-4o-mini",
+                messages: [
+                    {
+                        role: "system",
+                        content: "Sen bir Trendyol Kategori ve İçerik Yönetimi uzmanısın. JSON formatında, hatasız ve profesyonel e-ticaret verisi üretirsin."
+                    },
+                    {
+                        role: "user",
+                        content: [
+                            { type: "text", text: prompt },
+                            ...imageContent
+                        ]
+                    }
+                ],
+                response_format: { type: "json_object" },
+                temperature: 0.2,
+                max_tokens: 4000
+            });
+            return result;
+        }, { maxRetries: 2, delay: 1500 });
 
         const analysis = JSON.parse(completion.choices[0].message.content || "{}");
-        console.log("--- AI ANALİZ SONUCU ---");
-        console.log(JSON.stringify(analysis, null, 2));
-        console.log("-----------------------");
+        logger.info('AI Vision Analysis Result Received', { suggestedTitle: analysis.suggestedTitle });
 
         // Validate hierarchical category
         if (!analysis.hierarchicalCategoryIds || !Array.isArray(analysis.hierarchicalCategoryIds)) {
@@ -183,8 +187,6 @@ ${attributesList}
         });
 
     } catch (error: unknown) {
-        console.error("AI Product Analysis Error:", error);
-        const message = error instanceof Error ? error.message : "Unknown error";
-        return NextResponse.json({ error: message }, { status: 500 });
+        return handleApiError(error);
     }
 }

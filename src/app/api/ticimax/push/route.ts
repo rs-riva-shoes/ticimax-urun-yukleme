@@ -1,7 +1,7 @@
-
 import { NextResponse } from 'next/server';
 import { env } from '@/config/env';
 import { PushPayload, EnrichedVariant } from '@/types';
+import { logger, withRetry, handleApiError } from '@/utils/safety';
 
 const escapeXml = (unsafe: string | number | undefined) => {
     if (unsafe === undefined || unsafe === null) return '';
@@ -35,9 +35,8 @@ export async function POST(request: Request) {
         const existingId = String(Number(payload.ticimaxId) || 0);
         const mySku = payload.productCode || (payload.variants && payload.variants[0]?.sku) || "";
         
-        console.log(`[Ticimax Push] Ürün: ${payload.title}`);
-        console.log(`[Ticimax Push] ticimaxId (payload): ${payload.ticimaxId} -> existingId: ${existingId}`);
-        console.log(`[Ticimax Push] SKU: ${mySku}`);
+        logger.info('Ticimax Push Started', { productCode: payload.productCode, title: payload.title });
+        logger.info('ticimaxId Status', { payloadId: payload.ticimaxId, existingId });
 
         const taxRate = Number(payload.price.tax) || 10;
         const currencyId = getCurrencyId(payload.price.currency || "TL");
@@ -129,17 +128,28 @@ export async function POST(request: Request) {
   </soap:Body>
 </soap:Envelope>`;
 
-        console.log(`[Ticimax Push] SOAP gönderiliyor... ID=${existingId}, Varyant sayısı=${payload.variants.length}`);
+        logger.info('SOAP Payload Generated', { id: existingId, variants: payload.variants.length });
 
         const apiUrl = `${domain.replace(/\/$/, '')}/Servis/UrunServis.svc`;
-        const response = await fetch(apiUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'text/xml; charset=utf-8', 'SOAPAction': 'http://tempuri.org/IUrunServis/SaveUrun' },
-            body: soapBody
-        });
+        
+        const responseText = await withRetry(async () => {
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'text/xml; charset=utf-8', 
+                    'SOAPAction': 'http://tempuri.org/IUrunServis/SaveUrun' 
+                },
+                body: soapBody
+            });
 
-        const responseText = await response.text();
-        console.log("Ticimax Yanıtı:", responseText.substring(0, 2000));
+            if (!response.ok) {
+                throw new Error(`Ticimax HTTP Error: ${response.status} ${response.statusText}`);
+            }
+
+            return await response.text();
+        }, { maxRetries: 3, delay: 1000 });
+
+        logger.info("Ticimax Response Received", { length: responseText.length });
 
         // Hata kontrolü
         if (responseText.includes('<s:Fault>')) {
@@ -162,15 +172,16 @@ export async function POST(request: Request) {
         }
 
         if (parseInt(resultValue) > 0) {
-            console.log(`[Ticimax Push] ✅ Başarılı! Dönen ID: ${resultValue}`);
+            logger.info('Ticimax Push Successful', { ticimaxId: resultValue });
             return NextResponse.json({ success: true, ticimaxId: resultValue });
         } else {
-            console.log(`[Ticimax Push] ❌ Başarısız. SaveUrunResult: ${resultValue}`);
-            return NextResponse.json({ success: false, error: "Kaydedilemedi", details: responseText.substring(0, 2000) }, { status: 400 });
+            const errorMatch = responseText.match(/<Error>(.*?)<\/Error>/) || responseText.match(/<Message>(.*?)<\/Message>/);
+            const errorMsg = errorMatch ? errorMatch[1] : "Kaydedilemedi";
+            logger.error('Ticimax Push Failed', { resultValue, errorMsg });
+            return NextResponse.json({ success: false, error: errorMsg, details: responseText.substring(0, 2000) }, { status: 400 });
         }
 
     } catch (error) {
-        console.error("Ticimax Push Error:", error);
-        return NextResponse.json({ success: false, error: String(error) }, { status: 500 });
+        return handleApiError(error);
     }
 }
