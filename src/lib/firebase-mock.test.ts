@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from 'vitest';
 
 // We'll simulate the mock logic from firebase-admin.ts
 const mockDb = {
-    collection: vi.fn(() => ({
+    collection: vi.fn((_path: string) => ({
         count: vi.fn(() => ({
             get: vi.fn(async () => ({
                 data: () => ({ count: 42 })

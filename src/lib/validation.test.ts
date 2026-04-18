@@ -20,7 +20,7 @@ describe('Ticimax Payload Validation Tests', () => {
     });
 
     it('should fail if price is zero or negative', () => {
-        const payload = { title: "Test", categoryId: "1", brandId: "1", price: { sale: 0 } };
+        const payload = { title: "Test", categoryId: "1", brandId: "1", price: { sale: 0 } as any };
         const result = validatePushPayload(payload as Partial<PushPayload>);
         expect(result.isValid).toBe(false);
         expect(result.errors.some(e => e.field === "price")).toBe(true);
@@ -31,7 +31,7 @@ describe('Ticimax Payload Validation Tests', () => {
             title: "Test", 
             categoryId: "1", 
             brandId: "1", 
-            price: { sale: 100 },
+            price: { sale: 100 } as any,
             variants: [] 
         };
         const result = validatePushPayload(payload as Partial<PushPayload>);
@@ -45,7 +45,7 @@ describe('Ticimax Payload Validation Tests', () => {
             categoryId: "1", 
             brandId: "1", 
             productCode: "MODEL-001",
-            price: { sale: 100 },
+            price: { sale: 100 } as any,
             variants: [{ size: "38", color: "Siyah", qty: 10 }] 
         };
         const result = validatePushPayload(payload as Partial<PushPayload>);
