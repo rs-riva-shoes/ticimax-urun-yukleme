@@ -1,4 +1,0 @@
-src/app/api/admin/import-attributes/route.ts(3,28): error TS2307: Cannot find module '@/data/output.json' or its corresponding type declarations.
-src/app/page.tsx(33,6): error TS7006: Parameter 'doc' implicitly has an 'any' type.
-src/app/page.tsx(133,32): error TS7006: Parameter 'product' implicitly has an 'any' type.
-src/app/products/page.tsx(16,10): error TS7006: Parameter 'doc' implicitly has an 'any' type.

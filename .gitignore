@@ -39,3 +39,19 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Debug and Temp
+debug_*.js
+debug_*.xml
+tmp-*.js
+test-*.js
+*_output.xml
+*_output.txt
+*.log
+eslint-report.json
+eslint-report-utf8.json
+debug-regex.js
+verify-sync.js
+verify_output.txt
+tsc_output.txt
+build_output.txt
