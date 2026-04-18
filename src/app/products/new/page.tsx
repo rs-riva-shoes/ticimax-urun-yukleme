@@ -18,9 +18,12 @@ export default async function NewProductPage() {
         return [];
     };
 
-    const attributesRaw = await fetchSettingList('attributes');
-    const brandsRaw = await fetchSettingList('brands');
-    const suppliersRaw = await fetchSettingList('suppliers');
+    const [attributesRaw, brandsRaw, suppliersRaw] = await Promise.all([
+        fetchSettingList('attributes'),
+        fetchSettingList('brands'),
+        fetchSettingList('suppliers')
+    ]);
+
 
     // Normalize Data if needed (ensure numeric IDs for features/values if string)
     // The previous code parsedInt because JSON might have strings.

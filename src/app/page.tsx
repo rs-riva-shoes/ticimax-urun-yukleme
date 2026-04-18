@@ -10,28 +10,27 @@ import {
   Layers,
 } from "lucide-react";
 
-export const revalidate = 0;
+import Image from "next/image";
+
+export const revalidate = 30; // Cache for 30 seconds
 
 export default async function Dashboard() {
-  // Real stats
-  const productsSnapshot = await adminDb.collection("products").count().get();
+  // Fetch stats and latest products in parallel to avoid waterfals
+  const [productsSnapshot, activeSnapshot, latestSnapshot] = await Promise.all([
+    adminDb.collection("products").count().get(),
+    adminDb.collection("products").where("status", "==", "published").count().get(),
+    adminDb.collection("products")
+      .orderBy("createdAt", "desc")
+      .limit(6)
+      .get()
+  ]);
+
   const totalProducts = productsSnapshot.data().count;
-
-  // Count active products (those with status 'published')
-  const activeSnapshot = await adminDb.collection("products").where("status", "==", "published").count().get();
   const activeProducts = activeSnapshot.data().count;
-
-  // Latest 6 products
-  const latestSnapshot = await adminDb
-    .collection("products")
-    .orderBy("createdAt", "desc")
-    .limit(6)
-    .get();
-
-   
   const latestProducts = latestSnapshot.docs.map(
     (doc) => ({ id: doc.id, ...(doc.data() as Omit<Product, 'id'>) } as Product)
   );
+
 
   return (
     <div className="p-8 space-y-8">
@@ -137,15 +136,17 @@ export default async function Dashboard() {
               className="product-card group"
             >
               <div className="aspect-[4/3] relative bg-stone-100 overflow-hidden">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+                <Image
                   src={
                     product.images?.[0] ||
                     "https://via.placeholder.com/400x300?text=No+Image"
                   }
-                  alt={product.title}
+                  alt={product.title || "Ürün Görseli"}
+                  fill
                   className="product-image object-cover w-full h-full"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 />
+
                 {/* Price badge */}
                 <div className="absolute top-3 right-3 price-tag">
                   {product.price?.sale

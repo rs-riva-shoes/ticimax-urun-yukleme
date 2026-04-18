@@ -6,6 +6,8 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Edit, Trash2, ChevronDown, Package, Plus, X, UploadCloud, PlusCircle } from "lucide-react";
 import { sanitizeTurkish } from "@/lib/utils";
+import Image from "next/image";
+
 
 interface Variant {
     size?: string;
@@ -248,16 +250,18 @@ export function ProductCard({ product }: ProductCardProps) {
                 {/* Image Container */}
                 <div className="w-full sm:w-48 shrink-0 relative bg-stone-50 border-r border-stone-100 aspect-square sm:aspect-auto sm:min-h-[160px]">
                     <Link href={`/products/edit/${product.id}`} className="absolute inset-0 z-0">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
+                        <Image
                             src={
                                 product.images?.[0] ||
                                 "https://via.placeholder.com/400x400?text=No+Image"
                             }
                             alt={product.title || "Ürün"}
+                            fill
                             className="product-image object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
+                            sizes="(max-width: 640px) 100vw, 192px"
                         />
                     </Link>
+
                     
                     {/* Status Badge */}
                     {product.status && (
@@ -375,8 +379,8 @@ export function ProductCard({ product }: ProductCardProps) {
                                         className="w-full flex items-center justify-between p-3 hover:bg-stone-50 transition-colors"
                                     >
                                         <div className="flex items-center gap-4">
-                                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                                            <img src={colorImage} className="w-12 h-12 rounded object-cover border border-stone-100" alt={color} />
+                                            <Image src={colorImage} width={48} height={48} className="rounded object-cover border border-stone-100" alt={color} />
+
                                             <div className="flex flex-col items-start gap-1">
                                                 <div className="flex items-center gap-2">
                                                     <div
@@ -512,8 +516,8 @@ export function ProductCard({ product }: ProductCardProps) {
                                             <div className="flex flex-wrap gap-1.5">
                                                 {imagePreviewUrls.map((url, idx) => (
                                                     <div key={idx} className="relative w-[42px] h-[42px] rounded-lg overflow-hidden border border-stone-200 group/img">
-                                                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                                                        <img src={url} className="w-full h-full object-cover" alt={`preview-${idx}`} />
+                                                        <Image src={url} width={42} height={42} className="object-cover" alt={`preview-${idx}`} />
+
                                                         <button
                                                             onClick={(e) => { e.preventDefault(); removeImage(idx); }}
                                                             className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-opacity"
@@ -570,8 +574,7 @@ export function ProductCard({ product }: ProductCardProps) {
                                                         }`}
                                                     >
                                                         {colorImage && (
-                                                            /* eslint-disable-next-line @next/next/no-img-element */
-                                                            <img src={colorImage} alt={colorName} className="w-10 h-10 rounded-lg object-cover border border-stone-100" />
+                                                            <Image src={colorImage} width={40} height={40} alt={colorName} className="rounded-lg object-cover border border-stone-100" />
                                                         )}
                                                         <div className="w-5 h-5 rounded-full border-2 border-stone-300 shadow-inner flex-shrink-0" style={{ backgroundColor: getColorHex(colorName) }}></div>
                                                         <div className="flex-1">

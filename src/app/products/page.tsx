@@ -4,7 +4,8 @@ import { Plus, Package, ArrowLeft } from "lucide-react";
 import { ProductCard } from "@/components/products/ProductCard";
 import type { Product } from "@/lib/types";
 
-export const revalidate = 0;
+export const revalidate = 30; // 30 saniye önbellekleme
+
 
 export default async function ProductsPage() {
     const snapshot = await adminDb
