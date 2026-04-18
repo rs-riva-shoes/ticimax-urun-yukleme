@@ -38,7 +38,11 @@ try {
                     set: async () => { },
                     update: async () => { }
                 }),
-                where: () => ({ get: async () => ({ empty: true, docs: [] }) }),
+                where: () => ({ 
+                    get: async () => ({ empty: true, docs: [] }),
+                    count: () => ({ get: async () => ({ data: () => ({ count: 0 }) }) })
+                }),
+                count: () => ({ get: async () => ({ data: () => ({ count: 0 }) }) })
             }),
             batch: () => ({ set: () => { }, commit: async () => { } }),
             runTransaction: async () => { return "MOCK_SKU"; }
