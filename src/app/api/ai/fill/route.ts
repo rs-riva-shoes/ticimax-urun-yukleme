@@ -4,6 +4,9 @@ import { openai } from "@/lib/openai";
 
 export async function POST(req: Request) {
     try {
+        if (!openai) {
+            return NextResponse.json({ error: "OpenAI API Key is missing" }, { status: 500 });
+        }
         const { productId } = await req.json();
 
         if (!productId) {

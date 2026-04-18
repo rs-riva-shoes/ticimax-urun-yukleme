@@ -8,6 +8,9 @@ interface Category {
 
 export async function POST(req: Request) {
     try {
+        if (!openai) {
+            return NextResponse.json({ error: "OpenAI API Key is missing" }, { status: 500 });
+        }
         const { title, categories } = await req.json();
 
         if (!title) {
