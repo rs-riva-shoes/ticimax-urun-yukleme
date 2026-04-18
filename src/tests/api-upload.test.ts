@@ -1,6 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
 import { POST } from '@/app/api/upload/route';
-import { adminStorage } from '@/services/firebase-admin';
 
 vi.mock('@/services/firebase-admin', () => ({
     adminStorage: {

@@ -7,21 +7,21 @@ describe('Ticimax Payload Validation Tests', () => {
 
     it('should fail if title is missing', () => {
         const payload = { title: "", categoryId: "1", brandId: "1" };
-        const result = validatePushPayload(payload as Partial<PushPayload>);
+        const result = validatePushPayload(payload as unknown as PushPayload);
         expect(result.isValid).toBe(false);
         expect(result.errors.some(e => e.field === "title")).toBe(true);
     });
 
     it('should fail if no category is selected', () => {
         const payload = { title: "Test Product", brandId: "1" };
-        const result = validatePushPayload(payload as Partial<PushPayload>);
+        const result = validatePushPayload(payload as unknown as PushPayload);
         expect(result.isValid).toBe(false);
         expect(result.errors.some(e => e.field === "category")).toBe(true);
     });
 
     it('should fail if price is zero or negative', () => {
-        const payload = { title: "Test", categoryId: "1", brandId: "1", price: { sale: 0 } as any };
-        const result = validatePushPayload(payload as Partial<PushPayload>);
+        const payload = { title: "Test", categoryId: "1", brandId: "1", price: { sale: 0 } };
+        const result = validatePushPayload(payload as unknown as PushPayload);
         expect(result.isValid).toBe(false);
         expect(result.errors.some(e => e.field === "price")).toBe(true);
     });
@@ -31,10 +31,10 @@ describe('Ticimax Payload Validation Tests', () => {
             title: "Test", 
             categoryId: "1", 
             brandId: "1", 
-            price: { sale: 100 } as any,
+            price: { sale: 100 },
             variants: [] 
         };
-        const result = validatePushPayload(payload as Partial<PushPayload>);
+        const result = validatePushPayload(payload as unknown as PushPayload);
         expect(result.isValid).toBe(false);
         expect(result.errors.some(e => e.field === "variants")).toBe(true);
     });
@@ -44,11 +44,11 @@ describe('Ticimax Payload Validation Tests', () => {
             title: "Test", 
             categoryId: "1", 
             brandId: "1", 
-            price: { sale: 100 } as any,
+            price: { sale: 100 },
             variants: [{ size: "38", color: "Siyah", qty: 1 }],
             productCode: "" 
         };
-        const result = validatePushPayload(payload as Partial<PushPayload>);
+        const result = validatePushPayload(payload as unknown as PushPayload);
         expect(result.isValid).toBe(false);
         expect(result.errors.some(e => e.field === "productCode")).toBe(true);
     });
@@ -57,10 +57,10 @@ describe('Ticimax Payload Validation Tests', () => {
         it('should fail if variant size is empty', () => {
             const payload = { 
                 title: "Test", categoryId: "1", brandId: "1", productCode: "X",
-                price: { sale: 100 } as any,
+                price: { sale: 100 },
                 variants: [{ size: " ", color: "Siyah", qty: 1 }] 
             };
-            const result = validatePushPayload(payload as Partial<PushPayload>);
+            const result = validatePushPayload(payload as unknown as PushPayload);
             expect(result.isValid).toBe(false);
             expect(result.errors.some(e => e.field === "variants[0].size")).toBe(true);
         });
@@ -68,10 +68,10 @@ describe('Ticimax Payload Validation Tests', () => {
         it('should fail if variant color is empty', () => {
             const payload = { 
                 title: "Test", categoryId: "1", brandId: "1", productCode: "X",
-                price: { sale: 100 } as any,
+                price: { sale: 100 },
                 variants: [{ size: "38", color: "", qty: 1 }] 
             };
-            const result = validatePushPayload(payload as Partial<PushPayload>);
+            const result = validatePushPayload(payload as unknown as PushPayload);
             expect(result.isValid).toBe(false);
             expect(result.errors.some(e => e.field === "variants[0].color")).toBe(true);
         });
@@ -79,10 +79,10 @@ describe('Ticimax Payload Validation Tests', () => {
         it('should fail if variant qty is negative', () => {
             const payload = { 
                 title: "Test", categoryId: "1", brandId: "1", productCode: "X",
-                price: { sale: 100 } as any,
+                price: { sale: 100 },
                 variants: [{ size: "38", color: "Siyah", qty: -5 }] 
             };
-            const result = validatePushPayload(payload as Partial<PushPayload>);
+            const result = validatePushPayload(payload as unknown as PushPayload);
             expect(result.isValid).toBe(false);
             expect(result.errors.some(e => e.field === "variants[0].qty")).toBe(true);
         });
@@ -94,10 +94,10 @@ describe('Ticimax Payload Validation Tests', () => {
             categoryId: "1", 
             brandId: "1", 
             productCode: "MODEL-001",
-            price: { sale: 100 } as any,
+            price: { sale: 100 },
             variants: [{ size: "38", color: "Siyah", qty: 10 }] 
         };
-        const result = validatePushPayload(payload as Partial<PushPayload>);
+        const result = validatePushPayload(payload as unknown as PushPayload);
         expect(result.isValid).toBe(true);
     });
 

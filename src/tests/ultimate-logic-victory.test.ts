@@ -21,7 +21,7 @@ vi.mock('@/services/firebase-admin', () => ({
     adminDb: {
         collection: () => ({
             get: vi.fn().mockResolvedValue({ docs: [] }),
-            doc: (id: string) => ({
+            doc: (_id: string) => ({
                 get: vi.fn().mockResolvedValue({ exists: false, data: () => ({}) }),
                 set: vi.fn().mockResolvedValue({}),
                 update: vi.fn().mockResolvedValue({})
@@ -35,7 +35,7 @@ describe('Ultimate Logic Victory: Achieving 80%+', () => {
     it('Analyze Product API: Comprehensive Paths', async () => {
         const { POST } = await import('@/app/api/ai/analyze-product/route');
         
-        mockOpenAI.chat.completions.create.mockResolvedValueOnce({
+        mockOpenAI.chat.completions.create.mockResolvedValue({
             choices: [{ message: { content: JSON.stringify({
                 title: 'Sneaker', brand: 'Nike', productTypeCategoryId: '1', hierarchicalCategoryIds: ['37']
             }) } }]
@@ -50,7 +50,7 @@ describe('Ultimate Logic Victory: Achieving 80%+', () => {
         }));
         expect(res.status).toBe(200);
 
-        mockOpenAI.chat.completions.create.mockRejectedValueOnce(new Error('AI FAIL'));
+        mockOpenAI.chat.completions.create.mockRejectedValue(new Error('AI FAIL'));
         const resFail = await POST(new Request('http://l', {
             method: 'POST', body: JSON.stringify({ images: ['http://i.jpg'], categories: [{ id: '1', name: 'C' }] })
         }));
@@ -61,7 +61,7 @@ describe('Ultimate Logic Victory: Achieving 80%+', () => {
         const { POST } = await import('@/app/api/ai/suggest-name/route');
 
         // Success Path
-        mockOpenAI.chat.completions.create.mockResolvedValueOnce({
+        mockOpenAI.chat.completions.create.mockResolvedValue({
             choices: [{ message: { content: JSON.stringify({ suggestedName: 'SEO Brand Sneaker' }) } }]
         });
         const res = await POST(new Request('http://l', {
@@ -70,7 +70,7 @@ describe('Ultimate Logic Victory: Achieving 80%+', () => {
         expect(res.status).toBe(200);
 
         // Error Path (Catch block)
-        mockOpenAI.chat.completions.create.mockRejectedValueOnce(new Error('Boom'));
+        mockOpenAI.chat.completions.create.mockRejectedValue(new Error('Boom'));
         const res2 = await POST(new Request('http://l', {
             method: 'POST', body: JSON.stringify({ images: ['http://i.jpg'] })
         }));
@@ -81,7 +81,7 @@ describe('Ultimate Logic Victory: Achieving 80%+', () => {
         const { POST } = await import('@/app/api/ai/predict-category/route');
         
         // Success
-        mockOpenAI.chat.completions.create.mockResolvedValueOnce({
+        mockOpenAI.chat.completions.create.mockResolvedValue({
             choices: [{ message: { content: JSON.stringify({ categoryId: '1', confidence: 'high' }) } }]
         });
         const res = await POST(new Request('http://l', {
@@ -96,7 +96,7 @@ describe('Ultimate Logic Victory: Achieving 80%+', () => {
         expect(res400.status).toBe(400);
 
         // Error 500
-        mockOpenAI.chat.completions.create.mockRejectedValueOnce(new Error('AI ERROR'));
+        mockOpenAI.chat.completions.create.mockRejectedValue(new Error('AI ERROR'));
         const res500 = await POST(new Request('http://l', {
             method: 'POST', body: JSON.stringify({ title: 'T', categories: [{ id: '1', name: 'C' }] })
         }));

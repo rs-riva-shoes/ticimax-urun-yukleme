@@ -54,7 +54,8 @@ export async function GET() {
         }
 
         // XML Parse (Regex)
-        const suppliers: any[] = [];
+        interface DerivedSupplier { ticimaxId: number; name: string }
+        const suppliers: DerivedSupplier[] = [];
         const cleanXml = responseText.replace(/<[a-zA-Z0-9_]+:/g, '<').replace(/<\/[a-zA-Z0-9_]+:/g, '</');
         const supplierRegex = /<Tedarikci>([\s\S]*?)<\/Tedarikci>/g;
         let match;

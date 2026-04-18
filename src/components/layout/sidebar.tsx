@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { cn } from "@/utils";
 import { LionIcon } from "@/components/icons/Lion";
@@ -96,10 +97,11 @@ export function Sidebar() {
       <div className="p-4 border-t border-white/5">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-full ring-2 ring-amber-500/20 overflow-hidden relative">
-            <img 
+            <Image 
               src="/arslan-avatar.png" 
               alt="Arslan Avatar" 
-              className="w-full h-full object-cover"
+              fill
+              className="object-cover"
             />
           </div>
           <div>

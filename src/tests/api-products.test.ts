@@ -1,6 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
 import { GET } from '@/app/api/products/count/route';
-import { adminDb } from '@/services/firebase-admin';
 
 // adminDb'yi tamamen mocklamak yerine içindeki metodları spy ediyoruz
 vi.mock('@/services/firebase-admin', () => ({

@@ -20,14 +20,14 @@ global.fetch = vi.fn().mockImplementation(() =>
         json: () => Promise.resolve({ count: 0 }),
         text: () => Promise.resolve(''),
     })
-) as any;
+) as unknown as typeof fetch;
 
 // Next.js Image bileşenini standart bir <img> olarak mock'la
 vi.mock('next/image', () => ({
     __esModule: true,
-    default: (props: any) => {
+    default: (props: React.ImgHTMLAttributes<HTMLImageElement>) => {
         // eslint-disable-next-line @next/next/no-img-element
-        return <img {...props} />;
+        return <img alt="" {...props} />;
     },
 }));
 

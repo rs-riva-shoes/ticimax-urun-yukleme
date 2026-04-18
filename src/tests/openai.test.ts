@@ -4,7 +4,7 @@ import { describe, it, expect, vi } from 'vitest';
 vi.mock('openai', () => {
     return {
         default: class {
-            chat: any;
+            chat: { completions: { create: unknown } };
             constructor() {
                 this.chat = {
                     completions: {

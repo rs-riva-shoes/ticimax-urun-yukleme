@@ -1,6 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
 import { POST } from '@/app/api/sku/generate/route';
-import { adminDb } from '@/services/firebase-admin';
 
 // More detailed mock for transaction
 vi.mock('@/services/firebase-admin', () => ({

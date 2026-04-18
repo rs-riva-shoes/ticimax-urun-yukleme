@@ -34,6 +34,7 @@ describe('API: /api/ticimax/push (Final Pro Fix)', () => {
     it('should push product to Ticimax successfully using fetch', async () => {
         // Mock successful SOAP response
         mockFetch.mockResolvedValue({
+            ok: true,
             text: () => Promise.resolve('<SaveUrunResult>123456</SaveUrunResult>')
         });
 
@@ -63,6 +64,7 @@ describe('API: /api/ticimax/push (Final Pro Fix)', () => {
 
     it('should handle Ticimax errors (SaveUrunResult = 0)', async () => {
         mockFetch.mockResolvedValue({
+            ok: true,
             text: () => Promise.resolve('<SaveUrunResult>0</SaveUrunResult><Error>Zaten Kayıtlı</Error>')
         });
 
