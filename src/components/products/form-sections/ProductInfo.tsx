@@ -17,6 +17,7 @@ interface ProductInfoProps {
     aiLoading: boolean;
     nameSuggesting: boolean;
     hasFiles: boolean;
+    totalCount?: number; // Added total count for sequence
 }
 
 export function ProductInfo({
@@ -32,7 +33,8 @@ export function ProductInfo({
     handleAiFill,
     aiLoading,
     nameSuggesting,
-    hasFiles
+    hasFiles,
+    totalCount = 0
 }: ProductInfoProps) {
 
     // Akıllı Model Kodu Oluşturucu
@@ -42,19 +44,27 @@ export function ProductInfo({
             return;
         }
 
+        // 1. Marka Kısaltma (İlk 3 harf)
         const brandCode = sanitizeTurkishAlphaOnly(brandName, 3);
+        
+        // 2. Kategori Kısaltma (Sessiz harflerden 3 tane veya ilk 3)
         const catCode = sanitizeTurkishAlphaOnly(categoryName, 3);
 
-        // Cinsiyet kodlaması
-        let genderCode = "U"; // Unisex
+        // 3. Cinsiyet Kodlaması
+        let genderCode = "U"; 
         if (gender?.toUpperCase().includes("KADIN")) genderCode = "K";
         else if (gender?.toUpperCase().includes("ERKEK")) genderCode = "E";
         else if (gender?.toUpperCase().includes("COCUK") || gender?.toUpperCase().includes("BEBEK")) genderCode = "C";
 
-        const randomNum = Math.floor(1000 + Math.random() * 9000);
+        // 4. Yıl (Son 2 hane)
+        const year = new Date().getFullYear().toString().slice(-2);
 
-        // Format: MARKA-KAT-C-1234
-        setProductCode(`${brandCode}-${catCode}-${genderCode}-${randomNum}`);
+        // 5. Sıra No (3 hane) - Mevcut sayı + 1
+        const sequence = (totalCount + 1).toString().padStart(3, '0');
+
+        // Format: MARKA-KAT-C-YIL-SIRA
+        // Örn: ARS-SNK-K-24-001
+        setProductCode(`${brandCode}-${catCode}-${genderCode}-${year}-${sequence}`);
     };
 
     return (

@@ -81,6 +81,7 @@ export function ProductForm({ attributes, brands: initialBrands, suppliers: init
     const [pushStatus, setPushStatus] = useState<"idle" | "pushing" | "success" | "error">("idle");
     const [isSaving, setIsSaving] = useState(false);
     const [savedProductId, setSavedProductId] = useState<string | null>(null);
+    const [totalProducts, setTotalProducts] = useState(0);
 
     // Initial Data Fetch removed - using static data passed from page
 
@@ -132,6 +133,20 @@ export function ProductForm({ attributes, brands: initialBrands, suppliers: init
             alert("Bağlantı hatası");
         }
     };
+
+    // Fetch product count for SKU
+    useEffect(() => {
+        const fetchCount = async () => {
+            try {
+                const res = await fetch("/api/products/count");
+                const data = await res.json();
+                if (data.success) setTotalProducts(data.count);
+            } catch (err) {
+                console.error("Count fetch error:", err);
+            }
+        };
+        fetchCount();
+    }, []);
 
     // AI Name Suggestion
     useEffect(() => {
@@ -617,6 +632,7 @@ export function ProductForm({ attributes, brands: initialBrands, suppliers: init
                                 aiLoading={aiLoading}
                                 nameSuggesting={nameSuggesting}
                                 hasFiles={files.length > 0}
+                                totalCount={totalProducts}
                             />
                         </div>
                         {/* Sağ: Kategori & Marka */}

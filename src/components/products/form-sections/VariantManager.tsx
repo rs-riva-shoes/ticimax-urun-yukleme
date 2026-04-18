@@ -114,14 +114,28 @@ export function VariantManager({
     // ... (existing helper functions like generateBarcode)
 
     const generateBarcode = (code: string, color: string, size: string) => {
-        if (!code || !color || !size) return "";
-        return `${sanitizeTurkish(code)}-${sanitizeTurkish(color)}-${sanitizeTurkish(size)}`;
+        if (!code) return "";
+        const cleanCode = sanitizeTurkish(code);
+        const cleanColor = color ? sanitizeTurkish(color) : "";
+        const cleanSize = size ? sanitizeTurkish(size) : "";
+        
+        let barcode = cleanCode;
+        if (cleanColor) barcode += `-${cleanColor}`;
+        if (cleanSize) barcode += `-${cleanSize}`;
+        
+        return barcode;
     };
 
     // ... (existing actions: addVariant, removeVariant, updateVariant, generateBulkVariants)
 
     const addVariant = () => {
-        setVariants([...variants, { size: "", color: "", qty: 1, sku: productCode }]);
+        setVariants([...variants, { 
+            size: "", 
+            color: "", 
+            qty: 1, 
+            sku: productCode,
+            barcode: generateBarcode(productCode, "", "")
+        }]);
     };
 
     const removeVariant = (index: number) => setVariants(variants.filter((_, i) => i !== index));
@@ -135,13 +149,11 @@ export function VariantManager({
             (newVariants[index] as unknown as Record<string, unknown>)[field] = String(value);
         }
 
+        // Renk veya Beden değiştiğinde barkodu otomatik güncelle
         if (field === "size" || field === "color") {
             const currentSize = field === "size" ? String(value) : newVariants[index].size;
             const currentColor = field === "color" ? String(value) : newVariants[index].color;
-
-            if (productCode && currentSize && currentColor) {
-                newVariants[index].barcode = generateBarcode(productCode, currentColor, currentSize);
-            }
+            newVariants[index].barcode = generateBarcode(productCode, currentColor, currentSize);
         }
 
         newVariants[index].sku = productCode;
