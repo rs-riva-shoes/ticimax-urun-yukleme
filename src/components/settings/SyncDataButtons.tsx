@@ -18,7 +18,7 @@ const syncOptions: SyncButtonProps[] = [
     { type: "brands", label: "Marka", icon: User, apiPath: "/api/settings/brands/sync" },
     { type: "categories", label: "Kategori", icon: Layers, apiPath: "/api/settings/categories/sync" },
     { type: "suppliers", label: "Tedarikçi", icon: Briefcase, apiPath: "/api/settings/suppliers/sync" },
-    { type: "products", label: "Ürünler", icon: Package, apiPath: "/api/settings/products/sync" },
+    { type: "products", label: "Ürünler", icon: Package, apiPath: "https://us-central1-rs-riva-shoes.cloudfunctions.net/ticimaxSync" },
     { type: "wipe", label: "Tümünü Sil", icon: Trash2, apiPath: "/api/settings/products/wipe" }
 ];
 
