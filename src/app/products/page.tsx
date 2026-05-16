@@ -14,9 +14,17 @@ export default async function ProductsPage() {
         .get();
 
      
-    const products = snapshot.docs.map(
-        (doc) => ({ id: doc.id, ...(doc.data() as Omit<Product, 'id'>) } as Product)
-    );
+    const products = snapshot.docs.map((doc) => {
+        const data = doc.data();
+        return {
+            id: doc.id,
+            ...data,
+            // Convert Firestore Timestamps to ISO strings for Next.js serialization
+            createdAt: data.createdAt?.toDate?.()?.toISOString() || data.createdAt || null,
+            updatedAt: data.updatedAt?.toDate?.()?.toISOString() || data.updatedAt || null,
+            importedAt: data.importedAt?.toDate?.()?.toISOString() || data.importedAt || null,
+        } as Product;
+    });
 
     return (
         <div className="p-8 space-y-6">
