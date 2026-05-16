@@ -41,6 +41,7 @@ export interface ProductDimensions {
 }
 
 export interface ProductVariant {
+    id?: string | number;
     size: string;
     color: string;
     qty: number;
