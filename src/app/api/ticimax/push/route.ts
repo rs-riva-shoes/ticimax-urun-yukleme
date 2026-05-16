@@ -84,7 +84,12 @@ export async function POST(request: Request) {
                 ${variantImages.map((img: string) => `<b:string>${escapeXml(img)}</b:string>`).join('')}
               </a:Resimler>`
                     : '';
+                const variantIdNode = (v.id && !isNaN(Number(v.id)) && String(v.id).length < 13)
+                    ? `<a:ID>${Number(v.id)}</a:ID>`
+                    : '';
+
                 return `<a:Varyasyon>
+              ${variantIdNode}
               <a:Aktif>true</a:Aktif>
               <a:Barkod>${escapeXml(vBarcode)}</a:Barkod>
               <a:KdvOrani>${taxRate}</a:KdvOrani>

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { adminDb } from "@/services/firebase-admin";
+import { sanitizeTurkish } from "@/utils";
 
 export async function POST(req: Request) {
     try {
@@ -22,10 +23,20 @@ export async function POST(req: Request) {
 
         // Yeni varyantları formatla ve mevcutlara ekle
         const existingVariants = productData?.variants || [];
-        const formattedVariants = variants.map((v: Record<string, unknown>) => ({
-            ...v,
-            sku: parentSku
-        }));
+        const formattedVariants = variants.map((v: Record<string, unknown>) => {
+            const rawColor = typeof v.color === 'string' ? v.color.replace(/-?\s*renk$/i, '').trim() : '';
+            const rawSize = typeof v.size === 'string' ? v.size.trim() : '';
+            
+            let barcodeParts = [parentSku];
+            if (rawColor) barcodeParts.push(sanitizeTurkish(rawColor));
+            if (rawSize) barcodeParts.push(sanitizeTurkish(rawSize));
+            
+            return {
+                ...v,
+                sku: parentSku,
+                barcode: barcodeParts.join('-')
+            };
+        });
         existingVariants.push(...formattedVariants);
 
         // Galeri resmini güncelle
